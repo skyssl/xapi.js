@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>搜索--开源商城 | B2C商城 | B2B2C商城 | 三级分销 | 免费商城 | 多用户商城 | tpshop｜thinkphp shop｜TPshop 免费开源系统 | 微商城</title>
+    <link rel="stylesheet" href="../../res/css/style.css">
+    <link rel="stylesheet" type="text/css" href="../../res/css/iconfont.css"/>
+</head>
+<body class="" style="display: block">
+
+<div class="classreturn loginsignup ">
+    <div class="content">
+        <div class="ds-in-bl return">
+            <a xclose=""><img src="../../res/images/return.png" alt="返回"></a>
+        </div>
+        <div class="ds-in-bl search center">
+            <span>搜索</span>
+        </div>
+        <div class="ds-in-bl menu">
+            <a href="javascript:void(0);"><img src="../../res/images/class1.png" alt="菜单"></a>
+        </div>
+    </div>
+</div>
+<div class="flool tpnavf">
+    <div class="footer" data-dirdepth=1></div>
+</div>
+
+        <div class="p search_pl">
+            <div class="maleri30">
+                <div class="search2">
+                    <form method="post" action="goods/search" id="sourch_form">
+                        <div class="le_inp"><input type="text" name="q" id="q" value="" placeholder="搜索商品"/></div>
+                        <a href="javascript:;" onclick="secrch()" ><div class="ri_ss"><img src="../../res/images/sea.png"/></div></a>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!--<div class="near-le-ri p">-->
+            <!--<div class="maleri30">-->
+                <!--<span>最近搜索</span>-->
+                <!--<img src="../../res/images/dele.png"/>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="lb_showhide se_shien p" style="display: block;">-->
+            <!--<div class="maleri30">-->
+                <!--<ul>-->
+                    <!--<li><a href="">返回默认</a></li>-->
+                    <!--<li><a href="">手机数码</a></li>-->
+                <!--</ul>-->
+            <!--</div>-->
+        <!--</div>-->
+        <div class="near-le-ri p">
+            <div class="maleri30">
+                <span>热门搜索</span>
+                <!--<a href="">-->
+                    <!--<img src="../../res/images/refresh.png"/>-->
+                <!--</a>-->
+            </div>
+        </div>
+        <div class="lb_showhide se_shien p" style="display: block;">
+            <div class="maleri30">
+                <ul>
+                    <li><a xopen="goods/search?q=手机" class="ht">手机</a></li>
+                    <li><a xopen="goods/search?q=iphone" class="ht">iphone</a></li>
+                    <li><a xopen="goods/search?q=三星" class="ht">三星</a></li>
+                    <li><a xopen="goods/search?q=华为" class="ht">华为</a></li>
+                    <li><a xopen="goods/search?q=冰箱" class="ht">冰箱</a></li>
+                    <li><a xopen="goods/search?q=电脑" class="ht">电脑</a></li>
+                </ul>
+            </div>
+        </div>
+
+    <script src="../../res/js/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../res/js/style.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../res/js/mobile-util.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../res/js/layer.js" type="text/javascript" charset="utf-8"></script>
+
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/xapi.config-common.js"></script>
+    <script type="text/javascript" src="../../script/xapi.js"></script>
+    <script type="text/javascript" src="../../script/xapi.tags.js"></script>
+    <script type="text/javascript" src="../../script/xapi.render.js"></script>
+    <script type="text/javascript" src="../../script/xapi.APICloud.js"></script>
+    <script>
+    apiready = function(){
+        xapi.platform.init();
+    };
+
+    function secrch(){
+        if(!$('#q').val()){
+            xapi.toast('请输入搜索关键词');
+            return false;
+        }
+        xapi.platform.open_window('goods/search', "q=" + $('#q').val());
+    }
+    </script>
+</body>
+</html>

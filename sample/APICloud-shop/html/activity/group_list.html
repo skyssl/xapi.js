@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>团购--开源商城 | B2C商城 | B2B2C商城 | 三级分销 | 免费商城 | 多用户商城 | tpshop｜thinkphp shop｜TPshop 免费开源系统 | 微商城</title>
+    <link rel="stylesheet" href="../../res/css/style.css">
+    <link rel="stylesheet" type="text/css" href="../../res/css/iconfont.css"/>
+</head>
+<body class="" xx-get="Activity/group_list">
+
+<div class="classreturn loginsignup ">
+    <div class="content">
+        <div class="ds-in-bl return">
+            <a xclose><img src="../../res/images/return.png" alt="返回"></a>
+        </div>
+        <div class="ds-in-bl search center">
+            <span>团购</span>
+        </div>
+        <div class="ds-in-bl menu">
+            <a href="javascript:void(0);"><img src="../../res/images/class1.png" alt="菜单"></a>
+        </div>
+    </div>
+</div>
+<div class="flool tpnavf">
+    <div class="footer" data-dirdepth=1></div>
+</div>
+
+<nav class="storenav grst p">
+    <ul>
+        <li>
+            <a href="{:U('Mobile/Activity/group_list')}">
+                <span >默认</span>
+            </a>
+        </li>
+        <li>
+            <a href="{:U('Mobile/Activity/group_list',array('type'=>'new'))}">
+                <span >最新</span>
+            <i></i>
+            </a>
+        </li>
+        <li>
+            <a href="{:U('Mobile/Activity/group_list',array('type'=>'comment'))}">
+                <span >评论数</span>
+                <i></i>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<!--广告图片-s-->
+<div class="banner">
+    <a href="{$ads.banner.ad_link}">
+        <img x="$ads.banner.ad_code" title="{$ads.banner.title}" style="{$ads.banner.style}"/>
+    </a>
+</div>
+<!--中间广告图（2张）-s-->
+<div class="gg2">
+    <ul xx-list="$ads.middle" x-var="ad">
+        <li>
+            <a href="{$$ad.ad_link}">
+                <img src="{$$ad.ad_code}" title="{$$ad.title}" style="{$$ad.style"/>
+            </a>
+        </li>
+    </ul>
+</div>
+<!--中间广告图（2张）-e-->
+
+<!--底部广告图-s-->
+<div class="banner borltrt">
+    <if condition="$ads.bottom.length">
+        <a href="{$ads.bottom.ad_link}">
+            <img class="bor" src="{$ads.bottom.ad_code}" title="{$ads.bottom.title}" style="{$ads.bottom.style}"/>
+        </a>
+    </if>
+</div>
+<!--底部广告图-e-->
+<!--广告图片-e-->
+
+<!--底部商品列表-s-->
+<div class="floor guesslike groupquess dic">
+    <div class="likeshop">
+        <ul xx-list="$group_list" x-var="v" x-psize=6>
+            <li>
+                <a xopen="activity/group?id=$v.goods_id">
+                    <div class="similer-product">
+                        <div class="zjj close">
+                            <img x="$v.thumb">
+                            <div class="sale onsale">
+                                <p>{$v.rebate}折</p>
+                            </div>
+                        </div>
+                        <span class="similar-product-text">{$v.goods_name}</span>
+                        <span class="cy"><i>{$v.virtual_num + $v.order_num}</i>人参与</span>
+                        <span class="similar-product-price">
+                            ¥
+                            <span class="big-price">{$v.price}元</span>
+                            <!--未打折价格<span class="small-price"  style="display:;">￥{$v.goods_price}元</span> -->
+                            <span class="fr sg_g_time last_g_time" id="jstimerBox{$v.goods_id}"></span>
+                        </span>
+                    </div>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+<!--底部商品列表-e-->
+
+<script src="../../res/js/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../res/js/style.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../res/js/mobile-util.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../res/js/layer.js"  type="text/javascript" ></script>
+<script src="../../res/js/swipeSlide.min.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/xapi.config-common.js"></script>
+<script type="text/javascript" src="../../script/xapi.js"></script>
+<script type="text/javascript" src="../../script/xapi.tags.js"></script>
+<script type="text/javascript" src="../../script/xapi.render.js"></script>
+<script type="text/javascript" src="../../script/xapi.APICloud.js"></script>
+<script>
+    apiready = function(){
+        xapi.platform.init();
+    };
+</script>
+
+</body>
+</html>
+

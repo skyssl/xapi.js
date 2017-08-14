@@ -1,0 +1,326 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>搜索列表--开源商城 | B2C商城 | B2B2C商城 | 三级分销 | 免费商城 | 多用户商城 | tpshop｜thinkphp shop｜TPshop 免费开源系统 | 微商城</title>
+    <link rel="stylesheet" href="../../res/css/style.css">
+    <link rel="stylesheet" type="text/css" href="../../res/css/iconfont.css"/>
+</head>
+<body>
+    <!--搜索栏-s-->
+    <div class="classreturn whiback">
+        <div class="content">
+            <div class="ds-in-bl return">
+                <a xclose=""><img src="../../res/images/return.png" alt="返回"></a>
+            </div>
+            <div class="ds-in-bl search">
+                <form action="" method="post">
+                    <div class="sear-input">
+                        <a xopen="goods/search_box" id="q"></a>
+                    </div>
+                </form>
+            </div>
+            <div class="ds-in-bl menu">
+                <a href="javascript:void(0);"><img src="../../res/images/class1.png" alt="菜单"></a>
+            </div>
+        </div>
+    </div>
+    <!--搜索栏-e-->
+
+    <!--顶部隐藏菜单-s-->
+    <div class="flool tpnavf">
+        <div class="footer" data-dirdepth=1></div>
+    </div>
+    <!--顶部隐藏菜单-e-->
+
+    <!--排序按钮-s-->
+    <nav class="storenav p search_list_dump" id="head_search_box">
+        <ul id="ul_head_nav">
+            <li>
+                <span class="lb ">综合</span>
+                <i></i>
+            </li>
+            <li class="" x-data="sort=sales_sum">
+                <a class="btn-search">
+                     <span class="dq">销量</span>
+                </a>
+            </li>
+            <li class="" x-data="sort=shop_price" data-sort-asc="asc">
+                <a class="btn-search">
+                    <span class="jg">价格 </span>
+                    <i  class="pr"></i>
+                </a>
+            </li>
+            <li >
+                <span class="sx">筛选</span>
+                <i class="fitter"></i>
+
+            </li>
+            <li>
+                <i class="listorimg"></i>
+            </li>
+        </ul>
+    </nav>
+    <!--排序按钮-e-->
+
+    <div id="empty" style="display: none; padding: 20px;">
+        <div class="none"><img src="../../res/images/none.png"><br><br>暂无数据~</div>
+    </div>
+
+    <!--商品列表-s-->
+    <div id="goods_list" x-var="goods" x-psize="10" x-empty="#empty">
+        <!--商品-s-->
+        <div class="orderlistshpop p" style="display: none;">
+            <div class="maleri30">
+                <a xopen="goods/info?id={$goods.goods_id}" class="item">
+                    <div class="sc_list se_sclist">
+                        <div class="shopimg fl">
+                            <img src="{$goods.thumb}">
+                        </div>
+                        <div class="deleshow fr">
+                            <div class="deletes">
+                                <span class="similar-product-text fl">{$goods.goods_name|substr(0, 20)}</span>
+                            </div>
+                            <div class="prices">
+                                <p class="sc_pri fl"><span>￥</span><span>{$goods.shop_price}元</span></p>
+                            </div>
+                            <p class="weight"><span>{$goods.comment_count}</span><span>条评价</span></p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <!--商品-e-->
+    </div>
+
+    <!--商品列表-e-->
+    <!--综合筛选弹框-s-->
+    <div class="fil_all_comm">
+        <div class="maleri30">
+            <ul>
+                <li>
+                    <a class="btn-search" >综合</a>
+                </li>
+                <li>
+                    <a x-data="sort=is_new" class="btn-search">新品</a>
+                </li>
+                <li>
+                    <a x-data="sort=comment_count" class="btn-search">评价</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!--综合弹框-e-->
+
+    <!--筛选-s-->
+    <div class="screen_wi">
+        <div class="classreturn loginsignup">
+            <div class="content">
+                <div class="ds-in-bl return seac_retu">
+                    <a href="javascript:void(0);" ><img src="../../res/images/return.png" alt="返回"></a>
+                </div>
+                <div class="ds-in-bl search center">
+                    <span class="sx_jsxz">筛选</span>
+                </div>
+                <div class="ds-in-bl suce_ok ">
+                    <a href="javascript:void(0);">确定</a>
+                </div>
+            </div>
+        </div>
+
+        <!--顶部筛选-s-->
+        <div class="popcover">
+            <ul>
+                <li>
+                    <span >
+                    显示全部<input type="hidden"  class="sel" value="all" >
+                    </span>
+                </li>
+                <li>
+                    <span >
+                    仅看包邮<input type="hidden"  value="free_post" >
+                    </span>
+                </li>
+                <li>
+                    <span >
+                    仅看有货<input type="hidden"  value='store_count'>
+                    </span>
+                </li>
+                <li>
+                    <span >
+                    促销商品<input type="hidden"  value="prom_type" >
+                    </span>
+                </li>
+            </ul>
+        </div>
+        <!--筛选顶部-e-->
+
+        <!--一级筛选条件-s-->
+        <div class="list-se-all ma-to-20 one-related" >
+            <!--品牌-s-->
+            <div>
+                <div class="myorder p " id="attr-list" x-var="a" x-repeat-self onclick="filtercriteria('attr',{$a.attr_id})">
+                    <div class="content30" >
+                        <a href="javascript:void(0)">
+                            <div class="order" onclick="attr_click()" >
+                                <div class="fl">
+                                    <span x="$a.attr_name"></span>
+                                </div>
+                                <div class="fr">
+                                    <i class="Mright"></i>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!--品牌-e-->
+
+            <!--价格-s-->
+            <div class="myorder p" onclick="filterprice()" >
+                <div class="content30">
+                    <a href="javascript:void(0)">
+                        <div class="order" >
+                            <div class="fl">
+                                <span>价格</span>
+                            </div>
+                            <div class="fr">
+                                <i class="Mright"></i>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <!--价格-e-->
+            <input type="hidden" id="key" value="" />
+        </div>
+        <!--一级筛选条件-e-->
+
+        <!--二级刷选条件-->
+        <div class="list-se-all ma-to-20 two-related">
+            <!--商品属性筛选-s-->
+            <div>
+                <div class="myorder p filter brnda" id="attr-child-list" x-var="av" x-repeat-self data-id='{$av.attr_id}' style="display: none;">
+                    <div class="content30">
+                        <div class="order">
+                            <div class="fl">
+                                <span>{$av.val}</span>
+                            </div>
+                            <div class="fr">
+                                <i class="" x-data="attr={$av.key}_{$av.val}"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--商品属性筛选-e-->
+
+            <!--价格筛选-s-->
+            <div>
+                <div class="myorder p tow-price" id="price-list" x-var="p" x-repeat-self style="display: none">
+                    <div class="content30">
+                        <a class="btn-search">
+                            <div class="order">
+                                <div class="fl">
+                                    <span>{$p.value}</span>
+                                </div>
+                                <div class="fr">
+                                    <i class="" x-data="price={$p.v}"></i>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>    
+            <!--价格筛选-e-->
+        </div>
+        <!--二级刷选条件-e-->
+    </div>
+    <!--筛选-e-->
+    <div class="mask-filter-div" style="display: none;"></div>
+</body>
+
+<script src="../../res/js/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../res/js/mobile-util.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../res/js/layer.js"  type="text/javascript" ></script>
+<script src="../../res/js/style.js"  type="text/javascript" ></script>
+
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/xapi.config-common.js"></script>
+<script type="text/javascript" src="../../script/xapi.js"></script>
+<script type="text/javascript" src="../../script/xapi.tags.js"></script>
+<script type="text/javascript" src="../../script/xapi.render.js"></script>
+<script type="text/javascript" src="../../script/xapi.APICloud.js"></script>
+<script src="../../res/js/goods-list.js"  type="text/javascript" ></script>
+<script>
+var page = 1, q, id, uri;
+
+apiready = function(){
+    xapi.platform.init();
+    
+    q = xapi.page_param('q');
+    id = xapi.page_param('id');
+    uri = q ? 'goods/search' : 'goods/goodsList';
+
+    $('#q').text(q);
+
+    load_goods(false, true);
+    xapi.load_more(function(){
+        load_goods(true);
+    });
+};
+
+function load_goods(load_more, first){
+    var data = '';
+    if( $('#ul_head_nav>li.red').length ){
+        data = $('#ul_head_nav>li.red').attr('x-data');
+        data += "&sort_asc=" + ($('#ul_head_nav>li.red').attr('data-sort-asc')||'');
+    }
+    data += "&q=" + q + "&id=" + id;
+    if(load_more){
+        data += "&p=" + page++;
+    }
+    if($('.popcover span.ch_dg').length){
+        data += "&sel=" + $('.popcover span.ch_dg').parent().find('input').val();
+    }
+
+    $('.two-related .myorder .order i.Mright').each(function(){
+        data += "&" + $(this).attr('x-data');
+    });
+
+    xapi.get(uri, {data:data}, function(data){
+        $('#goods_list').render(data.goods_list, '', load_more);
+
+        if(first){
+            $('#price-list').render(data.filter_price);
+            if(data.filter_attr.length > 0){
+               $('#attr-list').render(data.filter_attr);
+
+               var attrs = []; 
+               for(var i in data.filter_attr){
+                    for(var j in data.filter_attr[i].attr_value){
+                        var tmp = data.filter_attr[i].attr_value[j];
+                        tmp.attr_id = data.filter_attr[i].attr_id;
+                        attrs.push(tmp);
+                    }
+               }
+               $('#attr-child-list').render(attrs); 
+            }
+        }
+
+    });
+}
+
+//排序
+$('.btn-search').click(function(){
+    load_goods();
+});
+
+//筛选确定按钮
+$('.suce_ok').click(function(){
+    load_goods();
+});
+
+</script>
+</html>

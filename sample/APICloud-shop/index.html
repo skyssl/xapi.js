@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Hello APP</title>
+    <link rel="stylesheet" type="text/css" href="./css/api.css" />
+    <link rel="stylesheet" type="text/css" href="./css/index.css" />
+    <link rel="stylesheet" type="text/css" href="./css/style.css" />
+</head>
+<body>
+    <div id="wrap">
+        <div id="main">
+
+        </div>
+
+        <div id="footer">
+            <!-- 原生代替tabBar -->
+            <div class="footer" id="footer_list">
+                <a class="activebut1 home active" xjump="index" tapmode="tap-active">首页</a>
+                <a class="activebut2 category" xjump="goods/category_list" tapmode="tap-active">分类</a>
+                <a class="activebut3 cart" xopen="*cart/index" tapmode="tap-active">购物车</a>
+                <a class="activebut4 profile" xjump="user/index" tapmode="tap-active">我的</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript" src="./script/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="./script/api.js"></script>
+<script type="text/javascript" src="./script/xapi.config-common.js"></script>
+<script type="text/javascript" src="./script/xapi.config-APICloud.js"></script>
+<script type="text/javascript" src="./script/xapi.js"></script>
+<script type="text/javascript" src="./script/xapi.tags.js"></script>
+<script type="text/javascript" src="./script/xapi.render.js"></script>
+<script type="text/javascript" src="./script/xapi.APICloud.js"></script>
+<script>
+apiready = function(){
+    xapi.platform.init();
+};
+</script>
+</html>

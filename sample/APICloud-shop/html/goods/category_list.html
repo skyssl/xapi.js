@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>所有分类--开源商城 | B2C商城 | B2B2C商城 | 三级分销 | 免费商城 | 多用户商城 | tpshop｜thinkphp shop｜TPshop 免费开源系统 | 微商城</title>
+    <link rel="stylesheet" href="../../res/css/style.css">
+    <link rel="stylesheet" type="text/css" href="../../res/css/iconfont.css"/>
+</head>
+<body class="[body]">
+
+    <div class="classreturn">
+        <div class="content">
+            <div class="ds-in-bl return">
+                <!-- <a xclose=""><img src="../../res/images/return.png" alt="返回"></a> -->
+            </div>
+            <div class="ds-in-bl search">
+                <form action="" method="post">
+                    <div class="sear-input">
+                        <a xopen="goods/search_box">
+                            <input type="text" value="" placeholder="请输入您所搜索的商品">
+                        </a>
+                    </div>
+                </form>
+            </div>
+            <!-- <div class="ds-in-bl menu">
+                <a href="javascript:void(0);"><img src="../../res/images/class1.png" alt="菜单"></a>
+            </div> -->
+        </div>
+    </div>
+
+    <!--顶部隐藏菜单-s-->
+    <div class="flool tpnavf">
+    <div class="footer" data-dirdepth=1>
+        
+    </div>
+</div>
+    <!--顶部隐藏菜单-e-->
+
+    <div class="flool classlist">
+        <div class="fl category1">
+            <ul id="cate_root_list" x-var="root">
+				<li style="display: none;">
+				   <a href="javascript:void(0);" data-id="0">{$root.mobile_name}</a>
+				</li>
+			</ul>
+        </div>
+        <div class="fr category2">
+
+            <!--广告图-s-->
+            <div class="tp-bann" id="category_ad"  data-id="0">
+                <a href="{$ad_link}" target="_blank">
+                    <img x="$ad_code" style="width: 100%">
+                </a>
+            </div>
+            <!--广告图-e-->
+
+            <div class="branchList" id="branch-list" x-repeat-self x-var="v1" style="display: none;">
+				<!--分类-s-->
+				<div class="tp-class-list">
+                    <div>
+    					<h4><a xopen="goods/list?id={$v1.id}" x="text::$v1.mobile_name"></a></h4>
+    					<ul class="tp-category">
+    						<li xx-list="$v1.sub_menu" x-var="v2" x-empty="">
+    							<a xopen="goods/list?id={$v2.id}">
+    								<img x="$v2.image" x-def="../../res/images/news1.png" src=""/>
+    								<p x="$v2.mobile_name"></p>
+    							</a>
+    						</li>
+    					</ul>
+                    </div>
+				</div>
+				<!--分类-e-->
+			</div>
+        </div>
+    </div>
+    
+    <script src="../../res/js/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../res/js/style.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../res/js/mobile-util.js" type="text/javascript" charset="utf-8"></script>
+
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/xapi.config-common.js"></script>
+    <script type="text/javascript" src="../../script/xapi.js"></script>
+    <script type="text/javascript" src="../../script/xapi.tags.js"></script>
+    <script type="text/javascript" src="../../script/xapi.render.js"></script>
+    <script type="text/javascript" src="../../script/xapi.APICloud.js"></script>
+    <script>
+    var __debug = false;
+    var all_categorys = [];
+    apiready = function(){
+        xapi.platform.init();
+
+        xapi.get('goods/categoryList', function(data){
+            all_categorys = data.category_list;
+            $('#cate_root_list').render(data.category_list);
+            $('#category_ad').render(data.ad);
+            $('#cate_root_list>li').first().click();
+            //$('#branch-list').render(all_categorys[0].tmenu);
+        });
+    };
+
+    $(document).on('click', '#cate_root_list>li', function(){
+        __debug = true;
+        $(this).addClass('cur red');
+        $(this).siblings().removeClass('cur red');
+        $('#branch-list').render(all_categorys[$(this).index()].tmenu);
+    });
+    
+    /*for(var name in $('#branch-list')[0].attributes[0])
+            alert( name + '=' + $('#branch-list')[0].attributes[name] );*/
+    </script>
+    </body>
+</html>

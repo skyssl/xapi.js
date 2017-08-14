@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>我的评价--开源商城 | B2C商城 | B2B2C商城 | 三级分销 | 免费商城 | 多用户商城 | tpshop｜thinkphp shop｜TPshop 免费开源系统 | 微商城</title>
+    <link rel="stylesheet" href="../../res/css/style.css">
+    <link rel="stylesheet" type="text/css" href="../../res/css/iconfont.css"/>
+</head>
+<body class="f3">
+
+<div class="classreturn loginsignup ">
+    <div class="content">
+        <div class="ds-in-bl return">
+            <a xclose><img src="../../res/images/return.png" alt="返回"></a>
+        </div>
+        <div class="ds-in-bl search center">
+            <span>我的收藏</span>
+        </div>
+        <div class="ds-in-bl menu">
+            <a href="javascript:void(0);"><img src="../../res/images/class1.png" alt="菜单"></a>
+        </div>
+    </div>
+</div>
+<div class="flool tpnavf">
+    <div class="footer" data-dirdepth=1>
+    </div>
+</div>
+
+<div class="comment_con p" style="display: none;" id="empty">
+    <div class="none"><img src="../../res/images/none.png"><br><br>暂无数据~</div>
+</div>
+
+<div class="floor guesslike">
+    <div class="likeshop">
+        <ul id="goods_list" xx-list="User/collect_list" x-var="good" x-psize=5>
+            <li>
+                <div class="similer-product">
+                    <a class="simidibl" xopen="goods/info?id=$good.goods_id">
+                        <img src="{$good.thumb}"/>
+                        <span class="similar-product-text">{$good.goods_name|substr(0,20)}</span>
+                    </a>
+                        <span class="similar-product-price">
+                            ¥
+                            <span class="big-price">{$good.shop_price}</span>
+                            <a xopen="goods/list?id=$good.cat_id"><span class="guess-button dele-button J_ping">看相似</span></a>
+                            <a href="user/cancel_collect?collect_id=$good.collect_id"><span class="guess-button  J_ping">删除</span></a>
+                        </span>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<script src="../../res/js/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../res/js/style.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../res/js/mobile-util.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../res/js/layer.js"  type="text/javascript" ></script>
+
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/xapi.config-common.js"></script>
+<script type="text/javascript" src="../../script/xapi.js"></script>
+<script type="text/javascript" src="../../script/xapi.tags.js"></script>
+<script type="text/javascript" src="../../script/xapi.render.js"></script>
+<script type="text/javascript" src="../../script/xapi.APICloud.js"></script>
+<script>
+    apiready = function(){
+        xapi.platform.init();
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>个人中心--开源商城 | B2C商城 | B2B2C商城 | 三级分销 | 免费商城 | 多用户商城 | tpshop｜thinkphp shop｜TPshop 免费开源系统 | 微商城</title>
+    <link rel="stylesheet" href="../../res/css/style.css">
+    <link rel="stylesheet" type="text/css" href="../../res/css/iconfont.css"/>
+</head>
+<body class="g4" xx-get="user/index" x-fail="login_fail_do" x-error="login_fail_do" x-listener="user_login" x-not-jump>
+
+    <div class="myhearder">
+        <div class="person" style="top:38%">
+            <a xjump="user/userinfo">
+                <div class="fl personicon">
+                    <div class="personicon">
+                        <img x="$user.head_pic" x-def="../../res/images/user68.jpg"/>
+                    </div>
+                </div>
+                <div class="fl lors" style="margin-top: 5px;">
+                    <span x="$user.nickname"></span>
+                </div>
+            </a>
+        </div>
+        <div class="set">
+            <!--设置-->
+            <a class="setting" xopen="*user/userinfo"><i></i></a>
+            <!--&lt;!&ndash;我的留言&ndash;&gt;-->
+            <!--<a class="massage" href="/index.php/mobile/User/message_notice.html"><i></i></a>-->
+        </div>
+        <div class="scgz">
+            <ul>
+                <li>
+                    <a xopen="*user/collect_list">
+                        <h2 x="$user.collect_count" x-def="0"></h2>
+                        <p>我的收藏</p>
+                    </a>
+                </li>
+                <li>
+                    <a xopen="*user/message_notice">
+                        <h2 x="$user_message_count" x-def="0"></h2>
+                        <p>消息通知</p>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="floor my p">
+        <div class="content">
+            <!--订单管理模块-s-->
+            <div class="floor myorder ma-to-20 p">
+                <div class="content30">
+                    <div class="order">
+                        <div class="fl">
+                            <img src="../../res/images/mlist.png"/>
+                            <span>我的订单</span>
+                        </div>
+                        <div class="fr">
+                            <a href="*order_list.html">
+                                <span>全部订单</span>
+                                <i class="Mright"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="floor">
+                <ul>
+                    <li>
+                        <a xopen="*user/order_list?type=WAITPAY">
+                            <span x="$user.waitPay">0</span>
+                            <img src="../../res/images/q1.png" alt="" />
+                            <p>待付款</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a xopen="*user/wait_receive?type=WAITRECEIVE">
+                            <span x="$user.waitReceive">0</span>
+                            <img src="../../res/images/q2.png" alt="" />
+                            <p>待收货</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a xopen="*user/comment?status=0">
+                            <span x="$user.uncomment_count">0</span>
+                            <img src="../../res/images/q3.png" alt="" />
+                            <p>待评价</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a xopen="*user/return_goods_list?type=1">
+                            <span x="$user.return_count" x-show="$user.return_count"></span>
+                            <img src="../../res/images/q4.png" alt="" />
+                            <p>退款/退货</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <!--订单管理模块-e-->
+
+            <!--资金管理-s-->
+            <div class="floor myorder ma-to-20 p">
+                <div class="content30">
+                    <div class="order">
+                        <div class="fl">
+                            <img src="../../res/images/mwallet.png"/>
+                            <span>我的钱包</span>
+                        </div>
+                        <div class="fr">
+                            <!--<a href="bankrollmm.html">-->
+                            <a xopen="*user/account">
+                                <span>资金管理</span>
+                                <i class="Mright"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="floor w3">
+                <ul>
+                    <li>
+                        <a xopen="*user/account">
+                            <h2 x="$user.user_money">0.00</h2>
+                            <p>余额</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a xopen="*user/coupon.html">
+                            <h2 x="$user.coupon_count">0</h2>
+                            <p>优惠券</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a xopen="*user/points.html">
+                            <h2 x="$user.pay_points">0</h2>
+                            <p>积分</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <!--资金管理-e-->
+
+            <div class="floor list7 ma-to-20">
+				<div class="myorder p">
+                    <div class="content30">
+                        <a xopen="*user/comment">
+                            <div class="order">
+                                <div class="fl">
+                                    <img src="../../res/images/w2.png"/>
+                                    <span>我的评价</span>
+                                </div>
+                                <div class="fr">
+                                    <i class="Mright"></i>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="myorder p">
+                    <div class="content30">
+                        <a xopen="*user/coupon_list">
+                            <div class="order">
+                                <div class="fl">
+                                    <img src="../../res/images/w7.png"/>
+                                    <span>领券中心</span>
+                                </div>
+                                <div class="fr">
+                                    <i class="Mright"></i>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="myorder p">
+                    <div class="content30">
+                        <a xopen="*user/visit_log">
+                            <div class="order">
+                                <div class="fl">
+                                    <img src="../../res/images/w3.png"/>
+                                    <span>浏览历史</span>
+                                </div>
+                                <div class="fr">
+                                    <i class="Mright"></i>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="myorder p">
+                    <div class="content30">
+                        <a xopen="*user/address_list">
+                            <div class="order">
+                                <div class="fl">
+                                    <img src="../../res/images/w8.png"/>
+                                    <span>地址管理</span>
+                                </div>
+                                <div class="fr">
+                                    <i class="Mright"></i>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+<script src="../../res/js/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../res/js/style.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../res/js/mobile-util.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../res/js/layer.js"  type="text/javascript" ></script>
+
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/xapi.config-common.js"></script>
+<script type="text/javascript" src="../../script/xapi.js"></script>
+<script type="text/javascript" src="../../script/xapi.tags.js"></script>
+<script type="text/javascript" src="../../script/xapi.render.js"></script>
+<script type="text/javascript" src="../../script/xapi.APICloud.js"></script>
+<script>
+apiready = function(){
+    xapi.platform.init();
+};
+
+function login_fail_do(){
+    xapi.render.set_default('.myhearder');
+}
+</script>
+</body>
+</html>

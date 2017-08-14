@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>填写订单--开源商城 | B2C商城 | B2B2C商城 | 三级分销 | 免费商城 | 多用户商城 | tpshop｜thinkphp shop｜TPshop 免费开源系统 | 微商城</title>
+    <link rel="stylesheet" href="../../res/css/style.css">
+    <link rel="stylesheet" type="text/css" href="../../res/css/iconfont.css"/>
+</head>
+<body class="g4">
+
+<div class="classreturn loginsignup ">
+    <div class="content">
+        <div class="ds-in-bl return">
+            <a xclose><img src="../../res/images/return.png" alt="返回"></a>
+        </div>
+        <div class="ds-in-bl search center">
+            <span>填写订单</span>
+        </div>
+        <div class="ds-in-bl menu">
+            <a href="javascript:void(0);"><img src="../../res/images/class1.png" alt="菜单"></a>
+        </div>
+    </div>
+</div>
+<div class="flool tpnavf">
+    <div class="footer" data-dirdepth=1>
+    </div>
+</div>
+<div id="main" xx-get="Cart/checkout" x-fail="checkout_fail" x-after-render="after_render" style="display: nonex;">
+<form name="cart2_form" id="cart2_form" method="post">
+    <div class="edit_gtfix">
+        <a xopen="user/address_list?source=checkout">
+            <div class="namephone fl">
+                <div class="top">
+                    <div class="le fl">{$address.consignee}</div>
+                    <div class="lr fl">{$address.mobile}</div>
+                </div>
+                <div class="bot">
+                    <i class="dwgp"></i>
+                    <span>{$address.address}</span>
+                </div>
+                <input type="hidden" value="{$address.address_id}" name="address_id" /> <!--收货地址id-->
+            </div>
+            <div class="fr youjter">
+                <i class="Mright"></i>
+            </div>
+            <div class="ttrebu">
+                <img src="../../res/images/tt.png"/>
+            </div>
+        </a>
+    </div>
+
+    <!--商品信息-s-->
+        <div class="ord_list fill-orderlist p">
+            <div class="maleri30" xx-list="$cartList" x-var="good">
+                    <div class="shopprice">
+                        <div class="img_or fl"><img src="{$good.thumb}"/></div>
+                        <div class="fon_or fl">
+                            <h2 class="similar-product-text">{$good.goods_name}</h2>
+                            <div>{$good.spec_key_name}</div>
+                        </div>
+                        <div class="price_or fr">
+                            <p class="red"><span>￥</span><span>{$good.member_goods_price}</span></p>
+                            <p class="ligfill">x{$good.goods_num}</p>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    <!--商品信息-e-->
+
+    <!--支持配送,发票信息-s-->
+    <div class="information_dr">
+        <div class="maleri30">
+            <div class="invoice list7">
+                <div class="myorder p">
+                    <div class="content30">
+                        <a class="takeoutps" href="javascript:void(0)">
+                            <div class="order">
+                                <div class="fl">
+                                    <span>支持配送</span>
+                                </div>
+                                <div class="fr">
+                                    <span id="postname" style="line-height: 1.2rem;">不选择，则按默认配送方式</span>
+                                    <i class="Mright"></i>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="invoice list7">
+                <div class="myorder p">
+                    <div class="content30">
+                        <a class="invoiceclickin" href="javascript:void(0)">
+                            <div class="order">
+                                <div class="fl">
+                                    <span>发票信息</span>
+                                </div>
+                                <div class="fr">
+                                    <span>纸质发票-个人<br>非图书商品-不开发票</span>
+                                    <input class="txt1" style='display:none;' type="text" name="invoice_title" />
+                                    <i class="Mright"></i>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div id="invoice" class="invoice list7" style="display: none;">
+                <div class="myorder p">
+                    <div class="content30">
+                        <div class="incorise">
+                            <span>发票抬头：</span>
+                            <input type="text" name="" id="" value="" placeholder="xx单位或xx个人" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="invoice list7">
+                <div class="myorder p">
+                    <div class="content30">
+                        <a class="remain" href="javascript:void(0);">
+                            <div class="order">
+                                <div class="fl">
+                                    <span>使用余额/积分</span>
+                                </div>
+                                <div class="fr">
+                                    <!--<i class="Mright"></i>-->
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        <!--使用余额、积分-s-->
+            <div id="balance-li" class="invoice list7">
+                <div class="myorder p">
+                    <div class="content30">
+                        <label>
+                            <div class="incorise">
+                                <span>使用余额：</span>
+                                <input id="user_money" name="user_money"  type="text"   placeholder="可用余额为:{$user.user_money}" onpaste="this.value=this.value.replace(/[^\d.]/g,'')" onkeyup="this.value=/^\d+\.?\d{0,2}$/.test(this.value) ? this.value : ''" />
+                                <input name="validate_bonus" type="button" value="使用" onClick="wield(this);" class="usejfye" />
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="myorder p">
+                    <div class="content30">
+                        <label>
+                            <div class="incorise">
+                                <span>使用积分：</span>
+                                <input id="pay_points" name="pay_points" type="text"   placeholder="可用积分为:{$user['pay_points']}"  onpaste="this.value=this.value.replace(/[^\d]/g,'')" onKeyUp="this.value=this.value.replace(/[^\d]/g,'')" />
+                                <input name="validate_bonus" type="button" value="使用" onClick="wield(this);" class="usejfye"/>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <if condition="$checkconpon">
+                <div class="myorder p">
+                    <div class="content30">
+                        <label>
+                            <div class="incorise">
+                                <span>使用券码：</span>
+                                <input id="couponCode" name="couponCode" type="text"   placeholder="填写优惠券券码"/>
+                                <input name="validate_bonus" type="button" value="使用" onClick="wield(this);$('#coupon_div').hide();" class="usejfye"/>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                </if>
+                <div class="myorder p" id="paypwd_view", style="display: none">
+                    <div class="content30">
+                        <label>
+                            <div class="incorise">
+                                <span>支付密码：</span>
+                                <input type="password" id="paypwd" name="paypwd" placeholder="请输入支付密码"/>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        <!--使用余额、积分-e-->
+        </div>
+    </div>
+<!--支持配送,发票信息-s-->
+
+<!--优惠券-s-->
+    <div class="information_dr ma-to-20" id="coupon_div">
+        <div class="maleri30">
+            <div class="invoice list7">
+                <div class="myorder p">
+                    <div class="content30">
+                        <a xopen="user/checkcoupon?lid=$checkconpon.lid">
+                            <div class="order">
+                                <div class="fl">
+                                    <span>优惠券</span>
+                                    <span class="couponssl"><em>{$couponList|length}</em>张可用</span>
+                                </div>
+                                <div class="fr">
+                                    {if($checkconpon)}
+                                        <span class="setalit" x="$checkconpon.name"></span>
+                                        <input type="hidden" name="coupon_id"  value="{$checkconpon.lid}" />
+                                    {else}
+                                        <span class="setalit">未使用</span>
+                                    {endif}
+                                    <i class="Mright"></i>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--优惠券-e-->
+
+<!--卖家留言-s-->
+    <div class="customer-messa">
+        <div class="maleri30">
+            <p>用户备注（50字）</p>
+            <textarea class="tapassa" onkeyup="checkfilltextarea('.tapassa','50')" name="user_note" rows="" cols="" placeholder="选填"></textarea>
+            <span class="xianzd"><em id="zero">50</em>/50</span>
+        </div>
+    </div>
+<!--卖家留言-e-->
+
+<!--订单金额-s-->
+    <div class="information_dr ma-to-20">
+        <div class="maleri30">
+            <div class="xx-list">
+                <p class="p">
+                    <span class="fl">商品金额：</span>
+                    <span class="fr red"><span>￥</span><span>{$total_price.total_fee}</span>元</span>
+                </p>
+                <p class="p">
+                    <span class="fl">配送费用：</span>
+                    <span class="fr red" ><span>￥</span><span id="postFee">0</span>元</span>
+                </p>
+                <p class="p">
+                    <span class="fl">使用优惠券：</span>
+                    <span class="fr red" ><span>-￥</span><span id="couponFee">0</span>元</span>
+                </p>
+                <p class="p">
+                    <span class="fl">使用积分：</span>
+                    <span class="fr red" ><span>-￥</span><span id="pointsFee">0</span>元</span>
+                </p>
+                <p class="p">
+                    <span class="fl">使用余额：</span>
+                    <span class="fr red" ><span>-￥</span><span id="balance">0</span>元</span>
+                </p>
+                <p class="p">
+                    <span class="fl">优惠活动：</span>
+                    <span class="fr red" ><span>-￥</span><span id="order_prom_amount">0</span>元</span>
+                </p>
+            </div>
+        </div>
+    </div>
+<!--订单金额-e-->
+
+<!--提交订单-s-->
+    <div class="mask-filter-div" style="display: none;"></div>
+    <div class="payit fillpay ma-to-200">
+        <div class="fr">
+            <a href="javascript:void(0)" onclick="submit_order()">提交订单</a>
+        </div>
+        <div class="fl">
+            <p><span class="pmo">应付金额：</span>￥<span id="payables"></span><span></span></p>
+        </div>
+    </div>
+<!--提交订单-e-->
+
+<!--配送弹窗-s-->
+    <div class="losepay closeorder" style="display: ;">
+        <div class="maleri30">
+            <div class="l_top">
+                <span>配送方式</span>
+                <em class="turenoff"></em>
+            </div>
+            <div class="resonco" xx-list="$shippingList" x-var="v">
+                <label >
+                    <div class="radio">
+                        <span class='che {if($v.__i eq 0)}check_t{endif}' postname='{$v.name}'>
+                            <i></i>
+                            <input type="radio" id="{$v.code}" name="shipping_code" id="{$v.code}" value="{$v.code}" style="display: none;" x-checked="$v.__i == 0" onclick="ajax_order_price()" class="c_checkbox_t" />
+                            <span>{$v.name}</span>
+                            <span>￥{$v.freight}</span>
+                        </span>
+                    </div>
+                </label>
+            </div>
+        </div>
+        <div class="submits_de bagrr" >确认</div>
+    </div>
+<!--配送弹窗-e-->
+</form>
+</div>
+
+<script src="../../res/js/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../res/js/style.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../res/js/mobile-util.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../res/js/layer.js"  type="text/javascript" ></script>
+<script src="../../res/js/checkout.js"  type="text/javascript" ></script>
+
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/xapi.config-common.js"></script>
+<script type="text/javascript" src="../../script/xapi.js"></script>
+<script type="text/javascript" src="../../script/xapi.tags.js"></script>
+<script type="text/javascript" src="../../script/xapi.render.js"></script>
+<script type="text/javascript" src="../../script/xapi.APICloud.js"></script>
+<script>
+    apiready = function(){
+        xapi.platform.init();
+    };
+
+    function checkout_fail(data) {
+        xapi.alert(data.error_msg, function () {
+            xapi.xclose();
+        });
+    }
+
+    function after_render(data, elm) {
+        $('#main').show();
+        ajax_order_price(); // 计算订单价钱
+    }
+
+    // 获取订单价格
+    function ajax_order_price()
+    {
+        xapi.post('Cart/cart3?act=order_price&t=' + Math.random(), {data:$('#cart2_form').serialize()}, function(data){
+            $("#balance").text(data.balance);// 余额
+            $("#pointsFee").text(data.pointsFee);// 积分支付
+            $("#order_prom_amount").text(data.order_prom_amount);// 订单 优惠活动
+            $("#postFee").text(data.postFee); // 物流费
+            if(data.couponFee == null){
+                $("#couponFee").text(0);// 优惠券
+            }else{
+                $("#couponFee").text(data.couponFee);// 优惠券
+            }
+            $("#payables").text(data.payables);// 应付
+        }, function(data){
+            $('#coupon_div').show();
+            xapi.toast(data.error_msg);
+        });
+    }
+
+    // 提交订单
+    ajax_return_status = 1; // 标识ajax 请求是否已经回来 可以进行下一次请求
+    function submit_order() {
+        if (ajax_return_status == 0)
+            return false;
+        ajax_return_status = 0;
+
+        var data = $('#cart2_form').serialize() + "&act=submit_order";
+        xapi.post('Cart/cart3', {data:data}, function (data) {
+            ajax_return_status = 1;
+
+            $("#postFee").text(data.postFee); // 物流费
+            if(data.couponFee == null){
+                $("#couponFee").text(0);// 优惠券
+            }else{
+                $("#couponFee").text(data.couponFee);// 优惠券
+            }
+            $("#balance").text(data.balance);// 余额
+            $("#pointsFee").text(data.pointsFee);// 积分支付
+            $("#payables").text(data.payables);// 应付
+            $("#order_prom_amount").text(data.order_prom_amount);// 订单 优惠活动
+
+            xapi.alert('订单提交成功，跳转支付页面!', function(){
+                xapi.xopen('cart/pay?order_id=' + data.order_id);    
+            });
+        }, function (data) {
+            ajax_return_status = 1; // 上一次ajax 已经返回, 可以进行下一次 ajax请求
+            xapi.toast(data.error_msg);
+            // 登录超时
+            if (data.status == -100) {
+                xapi.goto_login();
+            }
+            return false;
+        });
+
+    }
+</script>
+
+</body>
+</html>

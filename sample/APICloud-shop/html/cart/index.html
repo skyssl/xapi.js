@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>购物车--开源商城 | B2C商城 | B2B2C商城 | 三级分销 | 免费商城 | 多用户商城 | tpshop｜thinkphp shop｜TPshop 免费开源系统 | 微商城</title>
+    <link rel="stylesheet" href="../../res/css/style.css">
+    <link rel="stylesheet" type="text/css" href="../../res/css/iconfont.css"/>
+</head>
+<body class="">
+
+<div class="classreturn loginsignup ">
+    <div class="content">
+        <div class="ds-in-bl return">
+            <a xclose=""><img src="../../res/images/return.png" alt="返回"></a>
+        </div>
+        <div class="ds-in-bl search center">
+            <span>购物车</span>
+        </div>
+        <div class="ds-in-bl menu">
+            <a href="javascript:void(0);"><img src="../../res/images/class1.png" alt="菜单"></a>
+        </div>
+    </div>
+</div>
+<div class="flool tpnavf">
+    <div class="footer" data-dirdepth=1></div>
+</div>
+<!--###用户已登录###-->
+<!--购物车有商品-s-->
+<div class="cart_list" xx-get="*cart/index" x-after-render="after_render" x-listener="cart_add" style="margin-top: 15px;">
+    <form id="cart_form" name="formCart" ethod="post">
+        <div class="orderlistshpop p" xx-list="$list" x-var="v" x-repeat-self style="display: none;">
+            <div class="maleri30">
+                <!--商品列表-s-->
+                <div class="sc_list">
+                    <div class="radio fl inner">
+                        <!--商品勾选按钮-->
+                        <span onClick="cart.select(this)" data-id="{$v.id}"  class="che {if($v.selected == '1')}check_t{endif}" >
+                        <i>
+                            <input type="checkbox" data-id="{$v.id}" autocomplete="off" name="cart_select[{$v.id}]" class="cart_select" x-checked="$v.selected == '1'" style="display:none;" value="1">
+                        </i>
+                        </span>
+                    </div>
+                    <div class="shopimg fl">
+                        <a xopen="goods/info?id=$v.goods_id&t=@page_param.t">
+                            <!--商品图片-->
+                            <img src="{$v.thumb}">
+                        </a>
+                    </div>
+                    <div class="deleshow fr">
+                        <div class="deletes">
+                            <!--商品名-->
+                            <span class="similar-product-text fl">
+                                <a xopen="goods/info?id=$v.goods_id" x="text::$v.goods_name|substr(0,25)"></a>
+                            </span>
+                            <!--删除按钮-->
+                            <a href="javascript:void(0);" onclick="cart.delete('{$v.id}')" class="delescj"><img src="../../res/images/dele.png"/></a>
+                        </div>
+                        <!--商品属性，规格-->
+                        <p class="weight">{$v.spec_key_name}</p>
+                        <div class="prices">
+                            <p class="sc_pri fl">
+                                <!--商品单价-->
+                                <span>￥</span><span>{$v.member_goods_price}</span>
+                            </p>
+                            <!--加减数量-->
+                            <div class="plus fr get_mp">
+                                <span class="mp_minous" onclick="cart.chg_quantity(-1,'{$v.id}','{$v.store_count}')">-</span>
+                                <span class="mp_mp">
+                            <input id="goods_num[{$v.id}]" data-price="{$v.member_goods_price}" type="text" onKeyDown='if(event.keyCode == 13) event.returnValue = false' name="goods_num[{$v.id}]"  value="{$v.goods_num}"  class="input-num"  onblur="cart.chg_quantity(0,'{$v.id}','{$v.store_count}')"/>
+                            </span>
+                                <span class="mp_plus" onclick="cart.chg_quantity(1, '{$v.id}', '{$v.store_count}')">+</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--商品列表-e-->
+            </div>
+        </div>
+
+        <!--提交栏-s-->
+        <div class="foohi foohiext" id="bar-checkout">
+            <div class="payit ma-to-20 payallb">
+                <div class="fl alllef">
+                    <div class="radio fl" onclick="cart.select_all()">
+                    <span class="che alltoggle">
+                        <i></i>
+                    </span>
+                        <span class="all">全选</span>
+                    </div>
+                    <div class="youbia">
+                        <p><span class="pmo">总计：</span><span>￥</span><span id="cartsum" x="$total.total_fee"></span></p>
+                        <p class="lastime"><span>不含运费</span></p>
+                    </div>
+                </div>
+                <div class="fr">
+                    <a xopen="*cart/checkout">去结算</a>
+                </div>
+            </div>
+        </div>
+        <!--提交栏-e-->
+    </form>
+</div>
+
+<div id="cart_empty" style="display: none; text-align: center; margin-top: 20px;">
+    <img src="../../res/images/nothing.png"/>
+    <p>购物车暂无商品</p>
+    <a xopen="index">去逛逛</a>
+</div>
+
+<!--看看热卖-start-->
+<div class="hotshop seehotsho" style="margin-top: 30px;">
+    <div class="thirdlogin">
+        <h4>看看热卖</h4>
+    </div>
+</div>
+<div class="floor guesslike">
+    <div class="likeshop">
+        <ul xx-list="Cart/hot_goods" x-var="goods">
+            <li style="display: none;">
+                <a xopen="goods/info?id=$goods.goods_id">
+                    <div class="similer-product">
+                        <img src="{$goods.thumb}"/>
+                        <span class="similar-product-text">{$goods.goods_name|substr(0,20)}</span>
+                        <span class="similar-product-price">
+                            ¥<span class="big-price">{$goods.shop_price}</span>
+                        </span>
+                    </div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="add">热卖商品实时更新，常回来看看哟~</div>
+</div>
+<!--看看热卖-end-->
+
+<script src="../../res/js/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../res/js/style.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../res/js/mobile-util.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../res/js/layer.js"  type="text/javascript" ></script>
+<script src="../../res/js/cart.js"  type="text/javascript" ></script>
+
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/xapi.config-common.js"></script>
+<script type="text/javascript" src="../../script/xapi.js"></script>
+<script type="text/javascript" src="../../script/xapi.tags.js"></script>
+<script type="text/javascript" src="../../script/xapi.render.js"></script>
+<script type="text/javascript" src="../../script/xapi.APICloud.js"></script>
+<script>
+    apiready = function(){
+        xapi.platform.init();
+    };
+
+    function after_render(data, elm) {
+        if(!data.list.length){
+            $('#cart_empty').show();
+            //$('#bar-checkout').hide();
+        }else{
+            $('#cart_empty').hide();
+        }
+        cart.init();
+    }
+</script>
+</body>
+</html>
