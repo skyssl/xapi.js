@@ -13,8 +13,8 @@ xapi的优势：
 	头像：<img x="$hpic" />
 	姓名： <span x="$name"></span> <br />
 	年龄： <span x="$age"></span> <br />
-	注册时间： <span x="$reg_date|xapi.utils.date(###)"></span> <br />
-	电话： <span x="$mobile|'###'.substr(0,7)+'xxxx"></span> <br />
+	注册时间： <span x="$reg_date|date"></span> <br />
+	电话： <span x="$mobile|'###'+substr(0,7)+'xxxx"></span> <br />
 	角色列表(循环)：
         <span xx-list="$roles" x-var="item">
            <label>{$item.name}</label>
@@ -25,7 +25,7 @@ xapi的优势：
 ~~~
 <ul xx-list="goods/list" x-var="item" x-data="catid=@page_param.catid">
     <li>
-    	<a href="goods_detail.html?id={$item.id}">
+    	<a href="goods_detail.html?id=$item.id">
 	   <img x="$item.thumb">
 	   <span x="$item.goods_name"></span>
 	   ￥<span x="$item.price"></span>
