@@ -25,12 +25,12 @@ xapi的优势：
 
 ~~~
 <ul xx-list="goods/list" x-var="item" x-data="catid=@page_param.catid">
-	<li>
-    		<a href="goods_detail.html?id={$item.id}">
-    			<img x="$item.thumb">
-            	<span x="$item.goods_name"></span>
-                ￥<span x="$item.price"></span>
-            </a>
+    <li>
+    	<a href="goods_detail.html?id={$item.id}">
+	   <img x="$item.thumb">
+	   <span x="$item.goods_name"></span>
+	   ￥<span x="$item.price"></span>
+    	</a>
     </li>
 </ul>
 ~~~
