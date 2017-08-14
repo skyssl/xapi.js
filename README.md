@@ -16,10 +16,9 @@ xapi的优势：
 	注册时间： <span x="$reg_date|xapi.utils.date(###)"></span> <br />
 	电话： <span x="$mobile|'###'.substr(0,7)+'xxxx"></span> <br />
 	角色列表(循环)：
-		<span>
-    		    <p xx-list="$roles" x-var="item">{$item.name}	
-            	</p>
-    </span>
+        <span xx-list="$roles" x-var="item">
+           <label>{$item.name}</label>
+        </span>
 </div>
 ~~~
 
