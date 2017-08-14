@@ -3,7 +3,7 @@ xapi 让前端更简单
 
 xapi的优势：
 * 简单，快：xapi是一个速食框架，花10来分钟看看文档就可以上手用了，且可极大的提高开发效率，xapi让前端开发更简单也更快！
-* 跨平台：一套页面可以不做修改同时用于wap和APICloud：用xapi开发的web页面可以直接在pc的浏览器上运行，也可不做任何修改在APICloud上通过编译。
+* 跨平台：一套页面可以不做修改同时用于wap和APICloud，这样你就不需要为wap和app分别写两套页面了！
 
 文档：  https://www.kancloud.cn/skyssl/xapi/374984
 
