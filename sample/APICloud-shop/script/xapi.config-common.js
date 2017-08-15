@@ -12,7 +12,7 @@ var xapi_config = {
     'jsonp': true,                                      //PC测试用，生产环境请关闭，jsonp存在安全漏洞，请确保使用的jsonp服务安全可信（jsonp不支持post，且无法获取http状态码, 可能为您的调试带来困难）
     'sign_key': 'axfkuilsxx4349dd-fdsfxlffx',           //用于生成签名
     'access_token_name': 'access_token',                //标识登陆用户，你也可以设为id，本地存储和api请求的都使用该名称
-    'access_token_test': 'yyy',      //测试用的access_token
+    'access_token_test': 'xxx',      //测试用的access_token
     'url_page_name': 'p',                               //url分页参数名
     'url_psize_name': 'psize',                          //url分页大小参数名
     'html_dir': 'html/',                                //除首页外其他html文件的存放目录，请加上/

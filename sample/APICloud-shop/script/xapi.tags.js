@@ -4,12 +4,12 @@
  * 手动调用：xapi.get({elm:"#goods_info",api_path:"goods/info",data:"id=101"}, function(data){ ... });
             $('#xx').xget(api_path, option, callback_success);
  */
-xapi.create_command('get', function(){
+xapi.create_command('get', function(p){
     "use strict";
 
     var params = xapi.utils.tag_args(arguments, "xx-get"),
         $elm = params.$elm, option = params.option,
-        callback_success = params.callback_success, callback_fail = params.callback_fail,
+        callback_success = params.callback_success, callback_fail = params.callback_fail, callback_error = params.callback_error,
         api_path = params.api_path, data = params.data;  //记录页面请求接口的次数, 第一次时显示加载框
 
     if(!$elm.length && !callback_success){
@@ -80,7 +80,7 @@ xapi.create_command('get', function(){
         }
     }
 
-    xapi.api_request(api_path, 'get', data, callback_success, callback_fail);
+    xapi.api_request(api_path, 'get', data, callback_success, callback_fail, callback_error);
 });
 
 /**
@@ -93,7 +93,7 @@ xapi.create_command('list', function(){
 
     var params = xapi.utils.tag_args(arguments, 'xx-list'),
         $elm = params.$elm, option = params.option,
-        callback_success = params.callback_success, callback_fail = params.callback_fail,
+        callback_success = params.callback_success, callback_fail = params.callback_fail, callback_error = params.callback_error,
         api_path = params.api_path, data = params.data, array_data = params.array_data,
         target = option.target || $elm.attr('x-target');
 
@@ -197,7 +197,7 @@ xapi.create_command('list', function(){
         })($elm.x_uuid());
     }
 
-    xapi.api_request(api_path, 'get', data, callback_success, callback_fail);
+    xapi.api_request(api_path, 'get', data, callback_success, callback_fail, callback_error);
 });
 
 /**
@@ -210,7 +210,7 @@ xapi.create_command('post', function(){
 
     var params = xapi.utils.tag_args(arguments, 'xx-post'),
         $elm = params.$elm, option = params.option,
-        callback_success = params.callback_success, callback_fail = params.callback_fail,
+        callback_success = params.callback_success, callback_fail = params.callback_fail, callback_error = params.callback_error,
         api_path = params.api_path, data = params.data,
         method = option.method || $elm.attr('method') || 'post';
 
@@ -243,7 +243,7 @@ xapi.create_command('post', function(){
         };
     }
 
-    xapi.api_request(api_path, method, data, callback_success, callback_fail);
+    xapi.api_request(api_path, method, data, callback_success, callback_fail, callback_error);
     return false;
 }, 'submit');
 

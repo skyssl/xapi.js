@@ -130,7 +130,7 @@ xapi.render = (function($){
 
         var $first_element = repeat_self ? $element : $container.children().eq(0);
 
-        //无数据时显示提示（要先运行$loop_tpl.hide()再退出）
+        //无数据时显示提示（要先运行$loop_tpl.x_hide()再退出）
         if(!data || !data.length){
 
             if(!load_more && !$first_element.hasClass(css__lp_item)){
@@ -148,14 +148,14 @@ xapi.render = (function($){
             }
 
             if(note.substr(0, 1) == '#' || note.substr(0, 1) == '.'){
-                $( note ).show();
+                $( note ).x_show();
             }else{
                 var $note = $container.find('.' + css_note_empty);
                 if(!$note.length){
                     $note = $("<div style='text-align:center;clear:both;'></div>");
                     $container.append($note.addClass(css_note_empty));
                 }
-                $note.html(note).show();
+                $note.html(note).x_show();
             }
 
             if($element.x_nomore() && load_more){
@@ -209,13 +209,13 @@ xapi.render = (function($){
 
             var $new_item = xapi.render.fetch_element($loop_item, data_add_key(data[i], xvar), {repl_self: true});
             if($new_item && $new_item.length){
-                $new_item.attr('loop_id', loop_id).show();
+                $new_item.attr('loop_id', loop_id).x_show();
                 if(i == 0 && replace_first){
                     if(repeat_self){
                         $new_item.x_copy_attrs_from($element);
-                        $element.replaceWith($new_item.removeClass(css__lp_item).show());
+                        $element.replaceWith($new_item.removeClass(css__lp_item).x_show());
                     }else{
-                        $container.children().first().replaceWith($new_item.show());
+                        $container.children().first().replaceWith($new_item.x_show());
                     }
                 }else{
                     if(repeat_self && $new_item.attr('id')){
@@ -249,9 +249,9 @@ xapi.render = (function($){
         var $element = $$(element),
             $container = container ? $$(container) : null;
 
-        $($element.attr('x-empty')).hide();
-        $($element.attr('x-nomore')).hide();
-        $element.find('.' + css_note_empty).hide();
+        $($element.attr('x-empty')).x_hide();
+        $($element.attr('x-nomore')).x_hide();
+        $element.find('.' + css_note_empty).x_hide();
         $element.x_nomore(0);
 
         ($container || $element).find('.' + css__lp_item).remove();
@@ -318,7 +318,7 @@ xapi.render = (function($){
             $(this).removeAttr('x-show');
             if(result){
                 $(this).css("display","block");
-                //$(this).show();  //在css中设置了none时无效（如.orders a{display:none}）
+                //$(this).x_show();  //在css中设置了none时无效（如.orders a{display:none}）
             }else {
                 $(this).css("display", "none");
             }
@@ -459,7 +459,7 @@ xapi.render = (function($){
             $(this).after(repl_html).remove();
         });
 
-        $element.show();
+        $element.x_show();
 
         if(option.repl_self){
             $element = $( $element.html() );
@@ -669,3 +669,12 @@ $.fn.x_tpl = function(){
     return xapi.render.loop_tpl(this);
 }
 */
+
+/** 从左截取指定长度的字串 **/
+String.prototype.left = function (n) {
+    return this.slice(0, n);
+}
+/** 从右截取指定长度的字串 **/
+String.prototype.right = function (n) {
+    return this.slice(this.length - n);
+}

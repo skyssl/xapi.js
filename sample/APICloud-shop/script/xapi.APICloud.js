@@ -195,7 +195,7 @@ xapi.platform = (function($){
 
             api.toast({
                 msg: msg,
-                duration: (duration||2) * 1000,
+                duration: (duration||2000),
                 location: position||'middle'
             });
         },
