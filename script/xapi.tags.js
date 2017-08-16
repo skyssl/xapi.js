@@ -75,7 +75,8 @@ xapi.create_command('get', function(p){
 
                     //启动嵌套子命令
                     $elm.x_find_all_command_elements().each(function(){
-                        $(this).x_run();
+                        xapi.apply_command(this);
+                        //$(this).x_run();
                     });
 
                     xapi.after_render(data, $elm);
@@ -120,6 +121,31 @@ xapi.create_command('list', function(){
         return false;
     }
 
+    //绑定事件
+    if( $elm.attr('x-bind') ){
+        var bind = $elm.attr('x-bind'), attr_binded = '_x-binded-list-' + bind;
+
+        if(!$elm.attr(attr_binded)) {
+            var uuid = $elm.x_uuid();  //设置唯一ID
+            $(document).on($elm.attr('x-bind'), '[_uuid="' + uuid + '"]', (function (uuid) {
+                return function (event) {
+                    var $e = $('[_uuid="' + uuid + '"]');
+                    $e.x_page(null);
+                    xapi.list($e[0], {event_type: event.type});
+                }
+            })(uuid));
+
+            //标记已绑定
+            $elm.attr(attr_binded, 1);
+        }
+
+        if($elm.attr('x-bind') != option.event_type){
+            return false;
+        }
+        
+        api_path = $elm.attr('x-loadmore')||api_path;
+    }
+
     //子循环不处理
     if( api_path.substr(0, 1) == '$' ){
         return false;
@@ -143,28 +169,6 @@ xapi.create_command('list', function(){
         if( $elm.attr('x-re-req') === null && $elm.attr('x-psize') === null && $elm.x_req_count() > 0 ){
             xapi.debug('取消：重复请求', 'log');
             return false;
-        }
-
-        //绑定事件
-        if( $elm.attr('x-bind') ){
-            var bind = $elm.attr('x-bind'), attr_binded = '_x-binded-list-' + bind;
-            if(!$elm.attr(attr_binded)) {
-                var uuid = $elm.x_uuid();  //设置唯一ID
-                $(document).on($elm.attr('x-bind'), '[_uuid="' + uuid + '"]', (function (uuid) {
-                    return function (event) {
-                        var $e = $('[_uuid="' + uuid + '"]');
-                        $e.x_page(null);
-                        xapi.list($e[0], {event_type: event.type});
-                    }
-                })(uuid));
-
-                //标记已绑定
-                $elm.attr(attr_binded, 1);
-            }
-
-            if($elm.attr('x-bind') != option.event_type){
-                return false;
-            }
         }
 
         /*if($elm.x_nomore() && option.load_more){
@@ -237,7 +241,7 @@ xapi.create_command('post', function(){
             data[ arr_data[i].name ] = arr_data[i].value;
         }
 
-        if($elm.attr('method').toLowerCase() != 'get')
+        if($elm.attr('method') && $elm.attr('method').toLowerCase() != 'get')
             method = $elm.attr('method');
     }
 
@@ -261,28 +265,52 @@ xapi.create_command('photo', function(elm){
     var $elm = $$(elm),
         m = $elm.attr('xx-photo');
 
-    if(!$xapi.photo[m]){
+    if(!xapi.platform.photo[m]){
         xapi.debug('不支持方法：photo.' + m, 'err');
         return false;
     }
+    if(!$elm.attr('x-api-path')){
+        xapi.debug('请设置x-api-path', 'err');
+        return false;   
+    }
 
-    $xapi.photo[m]((function($elm){
+    xapi.platform.photo[m]((function($elm){
         return function(base64){
             if(!base64)return false;
             //$elm.attr('src', base64);return;
 
-            var $img;
-            if(!$elm.attr('x-insert')){
-                if($elm.is('img'))$img = $elm;
-                else $img = $elm.find('img.preview');
+            var after_select = '';
+            if($elm.attr('x-after-select')){
+                after_select = eval($elm.attr('x-after-select'));
+            }else{
+                after_select = function($elm, picdata){
+                    var $img;
+                    if(!$elm.attr('x-insert')){
+                        if($elm.is('img'))$img = $elm;
+                        else $img = $elm.find('img.preview');
+                        if(!$img.length)
+                            $img = $elm.find('img').first();
+                    }
+
+                    if(!$img || !$img.length){
+                        xapi.debug('没找到预览图片(img.preview)', 'err');
+                        return false;
+                    }
+
+                    $img.attr('src', picdata);
+                }
             }
 
-            if(!$img || !$img.length){
-                xapi.debug('没找到预览图片(img.preview)', 'err');
-                return false;
-            }
+            after_select($elm, base64);
 
-            $img.attr('src', base64);
+            //上传图片
+            xapi.post({
+                api_path:$elm.attr('x-api-path'),
+                data:{picdata:base64},
+                success:$elm.attr('x-success')||'',
+                fail:$elm.attr('x-fail')||'',
+                error:$elm.attr('x-error')||'',
+            });
         }
     })($elm));
 }, 'click');
@@ -307,7 +335,7 @@ xapi.create_command('tab', function(elm){
     "use strict";
 
     var $tab = $$(elm),
-        pane_selector = $tab.attr('x-tab-pane'),
+        pane_selector = $tab.attr('x-pane'),
         active_for = $tab.attr('x-active-for'),
         click_on = $tab.attr('x-click-on'),
         $conts = $( pane_selector );
@@ -326,9 +354,13 @@ xapi.create_command('tab', function(elm){
     var active_class = $tab.attr('x-active-class') || 'active';
     $tab.find(click_on).each(function (index) {
         var $this = $(this).attr('x-bind', 'click');
+
         $.each($tab[0].attributes, function(i, attrib){
-            if( xapi.utils.in_array(attrib.name, ['xx-tab', 'x-tab-cont', 'x-click-on', 'x-active-for', '_uuid', '_comd_lab']) )
-                return true;
+            if(attrib.name.substr(0, 2) != 'x-' && attrib.name.substr(0, 3) != 'xx-')
+                return;
+            if(xapi.utils.in_array(attrib.name, ['xx-tab', 'x-tab-cont', 'x-click-on', 'x-active-for', '_uuid', '_comd_lab']) )
+                return;
+
             if(!$this.attr(attrib.name)){
                 $this.attr(attrib.name, attrib.value);
             }

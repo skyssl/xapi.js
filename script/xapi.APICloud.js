@@ -393,13 +393,13 @@ xapi.platform = (function($){
         //选择图片
         'photo':{
             'select': function(callback){
-                this.photo_select(callback);
+                xapi.platform.photo_select(callback);
             },
             'pick': function(callback){
-                this.photo_pick(callback);
+                xapi.platform.photo_pick(callback);
             },
             'camera': function(callback){
-                this.photo_camera(callback);
+                xapi.platform.photo_camera(callback);
             }
         },
 
