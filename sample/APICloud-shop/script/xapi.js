@@ -143,6 +143,19 @@ var xapi = (function($){
         //return ($_cur_element && $_cur_element.length) ? $_cur_element : null;
     }
 
+    function _run_callback(name, $elm, data) {
+        //var name = arguments[0], $elm = arguments[1], data;
+        if($elm && $elm.attr(name)){
+            try{
+                var func = eval($elm.attr(name).replace('()', ''));
+                func(data, $elm);
+            }catch (error){
+                xapi.debug('x-after-render: 回调函数' + $elm.attr(name) + ' 运行失败:' + error, 'err');
+                return;
+            }
+        }
+    }
+
     var last_api_request = null;
     function _save_api_request(args){
         last_api_request = args;
@@ -661,38 +674,18 @@ var xapi = (function($){
             if(!$elm || !$elm.x_has_attr('x-no-progress')){
                 xapi.show_progress();
             }
-
-            if($elm && $elm.attr('x-before-request')){
-                var func;
-                var func = eval($elm.attr('x-before-request'));
-                func($elm);
-            }
+            _run_callback('x-before-request', $elm);
         },
 
         'after_complete': function(event, xhr, settings, $elm){
-            xapi.hide_progress(); 
-            if($elm && $elm.attr('x-after-complete')){
-                var func;
-                var func = eval($elm.attr('x-after-complete'));
-                func($elm);
-            }
+            xapi.hide_progress();
+            _run_callback('x-after-complete', $elm, event, xhr, settings);
         },
 
         'after_render':function(data, $elm){
-            $(document).show();
             $('body').show();
             xapi.hide_progress();
-
-            if($elm && $elm.attr('x-after-render')){
-                try{
-                    var func = eval($elm.attr('x-after-render'));
-                }catch (error){
-                    xapi.debug('x-after-render: 请确认是否有定义函数' + $elm.attr('x-after-render'), 'err');
-                    return;
-                }
-
-                func(data, $elm);
-            }
+            _run_callback('x-after-render', $elm, data);
         },
         'get_by_uuid': function(uuid){
             return $('[_uuid="' + uuid + '"]');
@@ -757,10 +750,18 @@ var xapi = (function($){
     };
 })($_jQuery_Zepto);
 
-//手动运行组件，如: $('#main').x_run();
-$.fn.x_run = function () {
+/**
+ * 手动运行组件，如: $('#main').x_run();
+ * @param run_bind 是否运行绑定了事件的指令
+ */
+$.fn.x_run = function (run_bind) {
+    if($(this).attr('x-bind') && !run_bind){
+        return;
+    }
+
     var commands = xapi.commands();
     for(var name in commands){
+        if(commands[name].bind && !run_bind)continue;
         if($(this).x_has_attr( "xx-" + name )){
             xapi[name]($(this)[0]);
         }
@@ -1021,6 +1022,7 @@ xapi.utils = (function($){
             }else{
                 result.$elm = $();
             }
+            result.option = result.option||{};
 
 			return result;
 		}

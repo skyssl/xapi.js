@@ -237,7 +237,7 @@ xapi.create_command('post', function(){
             data[ arr_data[i].name ] = arr_data[i].value;
         }
 
-        if($elm.attr('method').toLowerCase() != 'get')
+        if($elm.attr('method') && $elm.attr('method').toLowerCase() != 'get')
             method = $elm.attr('method');
     }
 

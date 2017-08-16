@@ -474,17 +474,19 @@ xapi.render = (function($){
         if(!src_var)return '';
         if(!data || xapi.utils.is_empty_object(data))return false;
 
-        var str_var = src_var;
+        var str_var = src_var, data_format;
         var i = str_var.indexOf('|'), str_func = '', val = '';
         if(i != -1){
             str_func = str_var.substr(i + 1);
-            if(!isNaN(str_func)){
+            if(str_func && !isNaN(str_func)){
                 str_func = "def=" + str_func;
             }else if(str_func == 'date'){
                 str_func = "xapi.utils.date(###, 'yyyy-MM-dd')";
             }else if(str_func == 'datetime'){
                 str_func = "xapi.utils.date(###, 'yyyy-MM-dd hh:mm:ss')";
-            }
+            }else if(str_func.substr(0, 7) == 'format='){
+                data_format = str_func.substr(7);
+			}
 
             str_var = str_var.substr(0, i);
         }
@@ -512,6 +514,12 @@ xapi.render = (function($){
             if(str_func.substr(0, 4) == 'def='){
                 eval( str_func.replace('def', 'val') + ";");
                 return val;
+            }
+        }
+
+        if(data_format && val){
+            if(/^\d+$/.test(val)){
+                str_func = "xapi.utils.date(###, '" + data_format + "')";
             }
         }
 

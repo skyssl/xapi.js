@@ -227,7 +227,7 @@ xapi.validator = (function($){
             msg = msg ? msg : label + '格式有误';
         }
 
-        $xapi.form_validator_fail_alert(msg);
+        xapi.form_validator_fail_alert(msg);
     }
 
     return {
