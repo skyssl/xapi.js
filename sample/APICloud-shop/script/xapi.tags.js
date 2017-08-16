@@ -17,6 +17,10 @@ xapi.create_command('get', function(p){
         return false;
     }
 
+    if($elm.attr('xx-tab')){
+        return false;
+    }
+
     if(!api_path){
         xapi.debug('请指定api_path', 'err');
         return false;
@@ -104,6 +108,10 @@ xapi.create_command('list', function(){
 
     if(!$elm.length && !callback_success){
         xapi.debug('list:没找到elm' + JSON.stringify(arguments), 'err');
+        return false;
+    }
+
+    if($elm.attr('xx-tab')){
         return false;
     }
 
@@ -248,6 +256,8 @@ xapi.create_command('post', function(){
 }, 'submit');
 
 xapi.create_command('photo', function(elm){
+    "use strict";
+
     var $elm = $$(elm),
         m = $elm.attr('xx-photo');
 
@@ -294,22 +304,72 @@ xapi.create_command('photo', function(elm){
  </div>
  */
 xapi.create_command('tab', function(elm){
-    var $container = $(elm),
-        $cont_selector = $container.attr('xx-tab'),
-        $conts = $( $cont_selector );
+    "use strict";
 
-    var active_class = $container.attr('x-active-class') ? $container.attr('x-active-class') : 'active';
-    $container.children().each(function (index) {
-        $(this).live('click', function(){
-            $(this).addClass(active_class);
-            if($conts.length <= 1){
-                index = 0;
+    var $tab = $$(elm),
+        pane_selector = $tab.attr('x-tab-pane'),
+        active_for = $tab.attr('x-active-for'),
+        click_on = $tab.attr('x-click-on'),
+        $conts = $( pane_selector );
+
+    if(!click_on){
+        xapi.debug('tab:请设置x-click-on', 'err');
+        return false;
+    }
+    if(!active_for){
+        xapi.debug('tab:请设置x-active-for', 'err');
+        return false;
+    }
+
+    $('body').show();
+
+    var active_class = $tab.attr('x-active-class') || 'active';
+    $tab.find(click_on).each(function (index) {
+        var $this = $(this).attr('x-bind', 'click');
+        $.each($tab[0].attributes, function(i, attrib){
+            if( xapi.utils.in_array(attrib.name, ['xx-tab', 'x-tab-cont', 'x-click-on', 'x-active-for', '_uuid', '_comd_lab']) )
+                return true;
+            if(!$this.attr(attrib.name)){
+                $this.attr(attrib.name, attrib.value);
             }
-            var $cont = $conts.eq(index);
-            $cont.show();
-
-            $(this).siblings().removeClass(active_class);
-            $cont.siblings($cont_selector).hide();
         });
+
+        var cmd_name = $this.x_has_attr('xx-get') ? 'get' : 'list';
+        xapi.apply_command(this, cmd_name);
+
+        var uuid_selector = '[_uuid="' + $this.x_uuid() + '"]';
+        $(document).on('click', uuid_selector, (function(index, pane_selector){
+            return function(){
+                if(!$(this).attr('x-target')){
+                    xapi.debug('请设置x-target', 'err');
+                    return false;
+                }
+                var $target = $($(this).attr('x-target'));
+                if(!$target.length){
+                    xapi.debug('找不到x-target:' + $(this).attr('x-target'), 'err');
+                    return false;
+                }
+                var $cont = $target.closest(pane_selector);
+                $cont.show();
+
+                var $active = $tab.find( active_for ).eq(index);
+                $active.addClass(active_class).siblings().removeClass(active_class);
+                $cont.siblings(pane_selector).hide();
+            }
+        })(index, pane_selector));
     });
+
+    //显示默认
+    var $def_active = $tab.find(active_for+"." + active_class);
+    if(!$def_active.length){
+        $tab.find(click_on).first().click();
+        return;
+    }
+
+    if($def_active[0].tagName.toLowerCase() == click_on.toLowerCase()){
+        var $def_click_on = $def_active;
+    }else{
+        var $def_click_on = $def_active.find(click_on);
+    }
+    $def_click_on.click();
 });

@@ -4,16 +4,20 @@
  * 手动调用：xapi.get({elm:"#goods_info",api_path:"goods/info",data:"id=101"}, function(data){ ... });
             $('#xx').xget(api_path, option, callback_success);
  */
-xapi.create_command('get', function(){
+xapi.create_command('get', function(p){
     "use strict";
 
     var params = xapi.utils.tag_args(arguments, "xx-get"),
         $elm = params.$elm, option = params.option,
-        callback_success = params.callback_success, callback_fail = params.callback_fail,
+        callback_success = params.callback_success, callback_fail = params.callback_fail, callback_error = params.callback_error,
         api_path = params.api_path, data = params.data;  //记录页面请求接口的次数, 第一次时显示加载框
 
     if(!$elm.length && !callback_success){
         xapi.debug('get:请指定element或callback', 'err');
+        return false;
+    }
+
+    if($elm.attr('xx-tab')){
         return false;
     }
 
@@ -80,7 +84,7 @@ xapi.create_command('get', function(){
         }
     }
 
-    xapi.api_request(api_path, 'get', data, callback_success, callback_fail);
+    xapi.api_request(api_path, 'get', data, callback_success, callback_fail, callback_error);
 });
 
 /**
@@ -93,7 +97,7 @@ xapi.create_command('list', function(){
 
     var params = xapi.utils.tag_args(arguments, 'xx-list'),
         $elm = params.$elm, option = params.option,
-        callback_success = params.callback_success, callback_fail = params.callback_fail,
+        callback_success = params.callback_success, callback_fail = params.callback_fail, callback_error = params.callback_error,
         api_path = params.api_path, data = params.data, array_data = params.array_data,
         target = option.target || $elm.attr('x-target');
 
@@ -104,6 +108,10 @@ xapi.create_command('list', function(){
 
     if(!$elm.length && !callback_success){
         xapi.debug('list:没找到elm' + JSON.stringify(arguments), 'err');
+        return false;
+    }
+
+    if($elm.attr('xx-tab')){
         return false;
     }
 
@@ -197,7 +205,7 @@ xapi.create_command('list', function(){
         })($elm.x_uuid());
     }
 
-    xapi.api_request(api_path, 'get', data, callback_success, callback_fail);
+    xapi.api_request(api_path, 'get', data, callback_success, callback_fail, callback_error);
 });
 
 /**
@@ -210,7 +218,7 @@ xapi.create_command('post', function(){
 
     var params = xapi.utils.tag_args(arguments, 'xx-post'),
         $elm = params.$elm, option = params.option,
-        callback_success = params.callback_success, callback_fail = params.callback_fail,
+        callback_success = params.callback_success, callback_fail = params.callback_fail, callback_error = params.callback_error,
         api_path = params.api_path, data = params.data,
         method = option.method || $elm.attr('method') || 'post';
 
@@ -243,11 +251,13 @@ xapi.create_command('post', function(){
         };
     }
 
-    xapi.api_request(api_path, method, data, callback_success, callback_fail);
+    xapi.api_request(api_path, method, data, callback_success, callback_fail, callback_error);
     return false;
 }, 'submit');
 
 xapi.create_command('photo', function(elm){
+    "use strict";
+
     var $elm = $$(elm),
         m = $elm.attr('xx-photo');
 
@@ -294,22 +304,72 @@ xapi.create_command('photo', function(elm){
  </div>
  */
 xapi.create_command('tab', function(elm){
-    var $container = $(elm),
-        $cont_selector = $container.attr('xx-tab'),
-        $conts = $( $cont_selector );
+    "use strict";
 
-    var active_class = $container.attr('x-active-class') ? $container.attr('x-active-class') : 'active';
-    $container.children().each(function (index) {
-        $(this).live('click', function(){
-            $(this).addClass(active_class);
-            if($conts.length <= 1){
-                index = 0;
+    var $tab = $$(elm),
+        pane_selector = $tab.attr('x-tab-pane'),
+        active_for = $tab.attr('x-active-for'),
+        click_on = $tab.attr('x-click-on'),
+        $conts = $( pane_selector );
+
+    if(!click_on){
+        xapi.debug('tab:请设置x-click-on', 'err');
+        return false;
+    }
+    if(!active_for){
+        xapi.debug('tab:请设置x-active-for', 'err');
+        return false;
+    }
+
+    $('body').show();
+
+    var active_class = $tab.attr('x-active-class') || 'active';
+    $tab.find(click_on).each(function (index) {
+        var $this = $(this).attr('x-bind', 'click');
+        $.each($tab[0].attributes, function(i, attrib){
+            if( xapi.utils.in_array(attrib.name, ['xx-tab', 'x-tab-cont', 'x-click-on', 'x-active-for', '_uuid', '_comd_lab']) )
+                return true;
+            if(!$this.attr(attrib.name)){
+                $this.attr(attrib.name, attrib.value);
             }
-            var $cont = $conts.eq(index);
-            $cont.show();
-
-            $(this).siblings().removeClass(active_class);
-            $cont.siblings($cont_selector).hide();
         });
+
+        var cmd_name = $this.x_has_attr('xx-get') ? 'get' : 'list';
+        xapi.apply_command(this, cmd_name);
+
+        var uuid_selector = '[_uuid="' + $this.x_uuid() + '"]';
+        $(document).on('click', uuid_selector, (function(index, pane_selector){
+            return function(){
+                if(!$(this).attr('x-target')){
+                    xapi.debug('请设置x-target', 'err');
+                    return false;
+                }
+                var $target = $($(this).attr('x-target'));
+                if(!$target.length){
+                    xapi.debug('找不到x-target:' + $(this).attr('x-target'), 'err');
+                    return false;
+                }
+                var $cont = $target.closest(pane_selector);
+                $cont.show();
+
+                var $active = $tab.find( active_for ).eq(index);
+                $active.addClass(active_class).siblings().removeClass(active_class);
+                $cont.siblings(pane_selector).hide();
+            }
+        })(index, pane_selector));
     });
+
+    //显示默认
+    var $def_active = $tab.find(active_for+"." + active_class);
+    if(!$def_active.length){
+        $tab.find(click_on).first().click();
+        return;
+    }
+
+    if($def_active[0].tagName.toLowerCase() == click_on.toLowerCase()){
+        var $def_click_on = $def_active;
+    }else{
+        var $def_click_on = $def_active.find(click_on);
+    }
+    $def_click_on.click();
 });

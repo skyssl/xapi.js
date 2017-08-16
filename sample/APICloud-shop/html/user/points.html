@@ -29,15 +29,15 @@
 <div class="allaccounted">
     <div class="maleri30">
         <div class="head_acc ma-to-20">
-            <ul xx-tab="allpion" x-active-class="red" xx-list="User/points" x-var="v" x-empty="#empty">
+            <ul xx-tab="1" x-tab-pane=".allpion" x-active-class="red" x-active-for="li" x-click-on="a"  xx-list="User/points" x-var="v" x-psize=10 x-target="#cont-common" x-empty="#empty">
                 <li>
-                    <a x-data="type=all" x-target="cont-common">全部</a>
+                    <a x-data="type=all">全部</a>
                 </li>
-                <li>
+                <li class="red">
                     <a x-data="type=recharge" x-target="#cont-recharge" x-var="recharge">充值记录</a>
                 </li>
                 <li>
-                    <a x-data="type=points" x-target="#cont-common">积分</a>
+                    <a x-data="type=points">积分</a>
                 </li>
             </ul>
         </div>

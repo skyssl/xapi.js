@@ -69,31 +69,7 @@ var xapi = (function($){
             })(name);
 
             $(selector).each(function () {
-                $(this).x_uuid();
-                $(this).x_comd_lab(name, selector);
-                $(this).x_is_command(1)
-
-                if(name == 'post' && !$(this).is('form')){
-                     if($(this).attr('x-bind') == 'disable')
-                        __commands[name].bind = '';
-                     else if(!$(this).attr('x-bind'))
-                        __commands[name].bind = 'click';
-                }
-
-                if(!__commands[name].bind){
-                    handler(this);
-                }else{
-                    bind = $(this).attr('x-bind') || bind;
-
-                    var uuid = $(this).x_uuid();  //设置唯一ID
-                    $(document).on(bind, '[_uuid="'+uuid+'"]', (function(uuid, mname){
-                        return function(){
-                            var $e = $( '[_uuid="'+uuid+'"]' );
-                            xapi[mname]($e[0]);
-                            return false;
-                        }
-                    })(uuid, name));
-                }
+                _apply_cmd(this, name, handler, bind, selector);
             });
         }
 
@@ -102,14 +78,16 @@ var xapi = (function($){
     function _commands() {
         return __commands;
     }
-    function _create_command(name, handler, bind, selector, override)
+    function _create_command(name, handler, bind, options)
     {
         if(xapi[name]){
             _debug("command:" + name + '与系统方法重名.', 'err');
             return;
         }
 
-        if(__commands[name] && !override){
+        options = options || {};
+
+        if(__commands[name] && !options.override){
             _debug("command:" + name + '已被使用.', 'err');
             return;
         }
@@ -117,8 +95,40 @@ var xapi = (function($){
         __commands[name] = {
             handler: handler,
             bind: bind,
-            selector: selector
+            selector: options.selector
         };
+    }
+    function _apply_cmd(elm, name, handler, bind, selector)
+    {
+        handler = handler||__commands[name].handler;
+        selector = __commands[name].selector ? __commands[name].selector : '[xx-' + name + ']';
+        
+        var $elm = $(elm);
+        $elm.x_uuid();
+        $elm.x_comd_lab(name, selector);
+        $elm.x_is_command(1);
+
+        if(name == 'post' && !$elm.is('form')){
+             if($elm.attr('x-bind') == 'disable')
+                __commands[name].bind = '';
+             else if(!$elm.attr('x-bind'))
+                __commands[name].bind = 'click';
+        }
+
+        if(!__commands[name].bind){
+            handler(elm);
+        }else{
+            bind = $elm.attr('x-bind') || bind;
+
+            var uuid = $elm.x_uuid();  //设置唯一ID
+            $(document).on(bind, '[_uuid="'+uuid+'"]', (function(uuid, mname){
+                return function(){
+                    var $e = $( '[_uuid="'+uuid+'"]' );
+                    xapi[mname]($e[0]);
+                    return false;
+                }
+            })(uuid, name));
+        }
     }
 
     function _set_current_element(element){
@@ -189,13 +199,14 @@ var xapi = (function($){
             }
         }
 
-        method = method ? method : 'get';
-        if(method == 'get' || method == 'GET'){
-            var url = _build_api_url(api_path, data);
+        var url;
+        method = (method ? method : 'get').toLocaleLowerCase();
+        if(method == 'get'){
+            url = _build_api_url(api_path, data);
             data = {};
             dataType = $xapi.jsonp && xapi.in_web ? 'jsonp' : 'json';
         }else{
-            var url = _build_api_url(api_path);
+            url = _build_api_url(api_path);
             dataType = 'json';
         }
 
@@ -220,11 +231,6 @@ var xapi = (function($){
             timeout:10000,                                  //超时时间设置为10秒；
             success:function(data){
                 _use_time(user_time_flag, true);
-
-                if( $cur_elm && $cur_elm.attr('x-send-event') ){
-                    xapi.send_event( $cur_elm.attr('x-send-event'), $xapi.get_api_result_data(data) );
-                }
-
                 _success_callback(data, $cur_elm, method, callback_success, callback_fail, callback_error);
                 return true;
             },
@@ -281,6 +287,12 @@ var xapi = (function($){
     }
 
     function _success_callback(responseText, $cur_elm, method, callback_success, callback_fail, callback_error) {
+
+        //发送事件
+        if( $cur_elm && $cur_elm.attr('x-send-event') ){
+            xapi.send_event( $cur_elm.attr('x-send-event'), $xapi.get_api_result_data(data) );
+        }
+
         if($cur_elm){
             $cur_elm.x_is_loading(0);  //不能在complete中设置，有延迟（complete执行顺序太靠后）
         }
@@ -522,6 +534,7 @@ var xapi = (function($){
         'is_login':_is_login,
         'commands':_commands,
         'create_command':_create_command,
+        'apply_command': _apply_cmd,
         'api_datas':__api_datas,
         //'bolts': _bolts,
         //'create_bolt':_create_bolt,
@@ -671,8 +684,13 @@ var xapi = (function($){
             xapi.hide_progress();
 
             if($elm && $elm.attr('x-after-render')){
-                var func;
-                var func = eval($elm.attr('x-after-render'));
+                try{
+                    var func = eval($elm.attr('x-after-render'));
+                }catch (error){
+                    xapi.debug('x-after-render: 请确认是否有定义函数' + $elm.attr('x-after-render'), 'err');
+                    return;
+                }
+
                 func(data, $elm);
             }
         },
@@ -892,13 +910,26 @@ $.fn.x_find_all_command_elements = function(){
 $.fn.x_find_all_tpl_elements = function(){
     return $(this).find('[_x-is_tpl="1"]');
 }
-
 $.fn.x_api_data = function (data, set) {
     if(!set && (data === null || data === undefined)){
        return xapi.api_datas[ $(this).x_uuid() ];
     }else{
         xapi.api_datas[ $(this).x_uuid() ] = data;
     }
+}
+
+$.fn.x_show = function () {
+    if($(this).css('display') != 'none'){
+        return $(this);
+    }
+    var display = $(this).attr('_x-display-old')||'';
+    return $(this).css('display', display);
+}
+$.fn.x_hide = function () {
+    if($(this).css('display')) {
+        $(this).attr('_x-display-old', $(this).css('display'));
+    }
+    return $(this).hide();
 }
 
 xapi.utils = (function($){
@@ -968,7 +999,33 @@ xapi.utils = (function($){
     }
 
     function _tag_args(args, tagname){
-        var params = {option:{}};
+        var result;
+
+		if(args.length == 1 && xapi.utils.is_json_object(args[0])){
+            result = args[0];
+            if(result.success){
+                result.callback_success = result.success;
+                delete result.success;
+            }
+            if(result.fail){
+                result.callback_fail = result.fail;
+                delete result.fail;
+            }
+            if(result.error){
+                result.callback_error = result.error;
+                delete result.error;
+            }
+            if(result.elm){
+                result.$elm = $$(elm);
+                delete result.elm;
+            }else{
+                result.$elm = $();
+            }
+
+			return result;
+		}
+
+        result = {option:{}};
 
         for(var i in args){
             if(!args[i])continue;
@@ -976,46 +1033,46 @@ xapi.utils = (function($){
             if(_is_dom(args[i]) || (typeof(args[i]) == 'string' && (
                 args[i].substr(0, 1) == '#' || args[i].substr(0, 1) == '.' || args[i].substr(0, 1) == '['
             ))){
-                params.$elm = $(args[i]);
+                result.$elm = $(args[i]);
             }else if(typeof args[i] == 'object'){
-                params.option = args[i];
+                result.option = args[i];
             }else if(typeof args[i] == 'function'){
-                if(!params.callback_success) {
-                    params.callback_success = args[i];
+                if(!result.callback_success) {
+                    result.callback_success = args[i];
                 }else{
-                    params.callback_fail = args[i];
+                    result.callback_fail = args[i];
                 }
             }else if(typeof args[i] == 'string'){
-                params.api_path = args[i];
+                result.api_path = args[i];
             }else if(typeof args[i] == 'array'){
-                params.array_data = args[i]; //list的测试数据
+                result.array_data = args[i]; //list的测试数据
             }
         }
 
-        if(!params.$elm){
-            params.$elm = params.option.elm ? $$(params.option.elm) : $(null);
+        if(!result.$elm){
+            result.$elm = result.option.elm ? $$(result.option.elm) : $(null);
         }
 
-        params.api_path = params.api_path || params.option.api_path || params.$elm.attr(tagname);
-        params.data = params.option.data || params.$elm.attr('x-data') || {};
+        result.api_path = result.api_path || result.option.api_path || result.$elm.attr(tagname);
+        result.data = result.option.data || result.$elm.attr('x-data') || {};
 
-        if(typeof params.data == 'string'){
-            params.data = xapi.utils.query_string2json(params.data);
+        if(typeof result.data == 'string'){
+            result.data = xapi.utils.query_string2json(result.data);
         }
 
-        for(var t in params.data){
-            params.data[t] += '';
+        for(var t in result.data){
+            result.data[t] += '';
             //页面间传递的参数
-            if(params.data[t].substr(0, 12) == '@page_param.'){
-                params.data[t] = xapi.page_param(params.data[t].substr(12));
+            if(result.data[t].substr(0, 12) == '@page_param.'){
+                result.data[t] = xapi.page_param(result.data[t].substr(12));
             }
             //本地存储
-            if(params.data[t].substr(0, 7) == '@local.'){
-                params.data[t] = xapi.storage(params.data[t].substr(7));
+            if(result.data[t].substr(0, 7) == '@local.'){
+                result.data[t] = xapi.storage(result.data[t].substr(7));
             }
         }
 
-        return params;
+        return result;
     }
 
     return {
@@ -1039,8 +1096,13 @@ xapi.utils = (function($){
             var t;
             for (t in e)
                 return !1;
+
             return !0;
         },
+		'is_json_object': function(obj){
+			var isjson = typeof(obj) == "object" && Object.prototype.toString.call(obj).toLowerCase() == "[object object]" && !obj.length;   
+			return isjson;
+		},
         'get_uuid': function generateUUID() {
             var d = new Date().getTime();
             var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {

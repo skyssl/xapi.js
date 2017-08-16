@@ -69,31 +69,7 @@ var xapi = (function($){
             })(name);
 
             $(selector).each(function () {
-                $(this).x_uuid();
-                $(this).x_comd_lab(name, selector);
-                $(this).x_is_command(1)
-
-                if(name == 'post' && !$(this).is('form')){
-                     if($(this).attr('x-bind') == 'disable')
-                        __commands[name].bind = '';
-                     else if(!$(this).attr('x-bind'))
-                        __commands[name].bind = 'click';
-                }
-
-                if(!__commands[name].bind){
-                    handler(this);
-                }else{
-                    bind = $(this).attr('x-bind') || bind;
-
-                    var uuid = $(this).x_uuid();  //设置唯一ID
-                    $(document).on(bind, '[_uuid="'+uuid+'"]', (function(uuid, mname){
-                        return function(){
-                            var $e = $( '[_uuid="'+uuid+'"]' );
-                            xapi[mname]($e[0]);
-                            return false;
-                        }
-                    })(uuid, name));
-                }
+                _apply_cmd(this, name, handler, bind, selector);
             });
         }
 
@@ -102,14 +78,16 @@ var xapi = (function($){
     function _commands() {
         return __commands;
     }
-    function _create_command(name, handler, bind, selector, override)
+    function _create_command(name, handler, bind, options)
     {
         if(xapi[name]){
             _debug("command:" + name + '与系统方法重名.', 'err');
             return;
         }
 
-        if(__commands[name] && !override){
+        options = options || {};
+
+        if(__commands[name] && !options.override){
             _debug("command:" + name + '已被使用.', 'err');
             return;
         }
@@ -117,8 +95,40 @@ var xapi = (function($){
         __commands[name] = {
             handler: handler,
             bind: bind,
-            selector: selector
+            selector: options.selector
         };
+    }
+    function _apply_cmd(elm, name, handler, bind, selector)
+    {
+        handler = handler||__commands[name].handler;
+        selector = __commands[name].selector ? __commands[name].selector : '[xx-' + name + ']';
+        
+        var $elm = $(elm);
+        $elm.x_uuid();
+        $elm.x_comd_lab(name, selector);
+        $elm.x_is_command(1);
+
+        if(name == 'post' && !$elm.is('form')){
+             if($elm.attr('x-bind') == 'disable')
+                __commands[name].bind = '';
+             else if(!$elm.attr('x-bind'))
+                __commands[name].bind = 'click';
+        }
+
+        if(!__commands[name].bind){
+            handler(elm);
+        }else{
+            bind = $elm.attr('x-bind') || bind;
+
+            var uuid = $elm.x_uuid();  //设置唯一ID
+            $(document).on(bind, '[_uuid="'+uuid+'"]', (function(uuid, mname){
+                return function(){
+                    var $e = $( '[_uuid="'+uuid+'"]' );
+                    xapi[mname]($e[0]);
+                    return false;
+                }
+            })(uuid, name));
+        }
     }
 
     function _set_current_element(element){
@@ -524,6 +534,7 @@ var xapi = (function($){
         'is_login':_is_login,
         'commands':_commands,
         'create_command':_create_command,
+        'apply_command': _apply_cmd,
         'api_datas':__api_datas,
         //'bolts': _bolts,
         //'create_bolt':_create_bolt,

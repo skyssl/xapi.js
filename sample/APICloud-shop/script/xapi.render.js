@@ -176,7 +176,7 @@ xapi.render = (function($){
         if(repeat_self){
             replace_first = replace_first && !$element.hasClass(css__lp_item);
         }else{
-            replace_first = replace_first && $element.children().length && !$element.children().eq(0).hasClass(css__lp_item);
+            replace_first = replace_first && $container.children().length && !$container.children().eq(0).hasClass(css__lp_item);
         }
 
         var loop_id = $element.x_uuid();
