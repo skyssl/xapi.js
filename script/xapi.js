@@ -407,8 +407,8 @@ var xapi = (function($){
         var set = {
             'req':{prefix:'Request', color:'blue'},
             'res':{prefix:'Response', color:'purple'},
-            'err':{prefix:'Error', color:'red', m:'error'},
-            'warning':{prefix:'Warning', color:'orange', m:'warn'},
+            'err':{prefix:'Error', m:'error'},
+            'warning':{prefix:'Warning', m:'warn'},
             'sep':{prefix:'--------------------------------------------------------', color:'grey'},
             'log':{prefix:'Log', color:'black'}
         };

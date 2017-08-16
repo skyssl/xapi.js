@@ -410,7 +410,7 @@ xapi.platform = (function($){
                 buttons: ['拍照','从手机相册选择']
             }, function(ret, err) {
                 if (!ret) {
-                    $xapi.toast_err(JSON.stringify(err));
+                    xapi.toast_err(JSON.stringify(err));
                 }
 
                 if(ret.buttonIndex == 1){
@@ -433,7 +433,7 @@ xapi.platform = (function($){
                 targetHeight: 750
             }, function(ret, err) {
                 if (!ret) {
-                    $xapi.toast_err(JSON.stringify(err));
+                    xapi.toast_err(JSON.stringify(err));
                 }else{
                     callback(ret.base64Data);
                 }
@@ -452,7 +452,7 @@ xapi.platform = (function($){
                 saveToPhotoAlbum: true
             }, function(ret, err) {
                 if (!ret) {
-                    $xapi.toast_err(JSON.stringify(err));
+                    xapi.toast_err(JSON.stringify(err));
                 }else{
                     callback(ret.base64Data);
                 }
