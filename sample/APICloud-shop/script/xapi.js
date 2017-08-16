@@ -75,35 +75,22 @@ var xapi = (function($){
 
     }
 
-    function _commands() {
-        return __commands;
-    }
-    function _create_command(name, handler, bind, options)
-    {
-        if(xapi[name]){
-            _debug("command:" + name + '与系统方法重名.', 'err');
-            return;
-        }
-
-        options = options || {};
-
-        if(__commands[name] && !options.override){
-            _debug("command:" + name + '已被使用.', 'err');
-            return;
-        }
-
-        __commands[name] = {
-            handler: handler,
-            bind: bind,
-            selector: options.selector
-        };
-    }
     function _apply_cmd(elm, name, handler, bind, selector)
     {
+        var $elm = $$(elm);
+        
+        if(!name){
+            for(var name in __commands){
+                if($elm.attr('xx-' + name)){
+                    _apply_cmd(elm, name);
+                }
+            }
+            return;
+        }
+
         handler = handler||__commands[name].handler;
         selector = __commands[name].selector ? __commands[name].selector : '[xx-' + name + ']';
         
-        var $elm = $(elm);
         $elm.x_uuid();
         $elm.x_comd_lab(name, selector);
         $elm.x_is_command(1);
@@ -131,6 +118,31 @@ var xapi = (function($){
         }
     }
 
+    function _commands() {
+        return __commands;
+    }
+
+    function _create_command(name, handler, bind, options)
+    {
+        if(xapi[name]){
+            _debug("command:" + name + '与系统方法重名.', 'err');
+            return;
+        }
+
+        options = options || {};
+
+        if(__commands[name] && !options.override){
+            _debug("command:" + name + '已被使用.', 'err');
+            return;
+        }
+
+        __commands[name] = {
+            handler: handler,
+            bind: bind,
+            selector: options.selector
+        };
+    }
+
     function _set_current_element(element){
         //$_cur_element = $$(element);
         var $elm = element ? $$(element) : '';
@@ -144,9 +156,10 @@ var xapi = (function($){
     }
 
     function _run_callback(name, $elm, data) {
+        //var name = arguments[0], $elm = arguments[1], data;
         if($elm && $elm.attr(name)){
             try{
-                var func = eval($elm.attr(name).replace('()', ''));
+                var func = eval($elm.attr(name));
                 func(data, $elm);
             }catch (error){
                 xapi.debug('x-after-render: 回调函数' + $elm.attr(name) + ' 运行失败:' + error, 'err');
@@ -417,16 +430,25 @@ var xapi = (function($){
         type = type || 'log';
 
         var set = {
-            'req':{prefix:'Request', color:'blue'},
+            'req':{prefix:'Request', m:'info', color:'blue'},
             'res':{prefix:'Response', color:'purple'},
-            'err':{prefix:'Error', color:'red'},
-            'warning':{prefix:'Warning', color:'orange'},
+            'err':{prefix:'Error', m:'error'},
+            'warning':{prefix:'Warning', m:'warn'},
             'sep':{prefix:'--------------------------------------------------------', color:'grey'},
-            'log':{prefix:'Log', color:'black'}
+            'log':{prefix:'Log'}
         };
 
-        console.log('%c' + set[type].prefix + ' > ' + content, "color:" + set[type].color);
+        content = (set[type].color?'%c':'') + 'xapi:: ' + set[type].prefix + ' > ' + content;
+
+        if(set[type].m){
+            console[set[type].m](content);
+        }else if(set[type].color){
+            console.log(content, "color:" + set[type].color);
+        }else{
+            console.log(content);
+        }
     }
+
     function _set_depth(key, end){
         //
     }
@@ -673,6 +695,7 @@ var xapi = (function($){
             if(!$elm || !$elm.x_has_attr('x-no-progress')){
                 xapi.show_progress();
             }
+
             _run_callback('x-before-request', $elm);
         },
 
