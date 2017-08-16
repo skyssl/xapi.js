@@ -261,12 +261,12 @@ xapi.create_command('photo', function(elm){
     var $elm = $$(elm),
         m = $elm.attr('xx-photo');
 
-    if(!$xapi.photo[m]){
+    if(!xapi.platform.photo[m]){
         xapi.debug('不支持方法：photo.' + m, 'err');
         return false;
     }
 
-    $xapi.photo[m]((function($elm){
+    xapi.platform.photo[m]((function($elm){
         return function(base64){
             if(!base64)return false;
             //$elm.attr('src', base64);return;

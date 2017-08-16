@@ -407,14 +407,20 @@ var xapi = (function($){
         var set = {
             'req':{prefix:'Request', color:'blue'},
             'res':{prefix:'Response', color:'purple'},
-            'err':{prefix:'Error', color:'red'},
-            'warning':{prefix:'Warning', color:'orange'},
+            'err':{prefix:'Error', color:'red', m:'error'},
+            'warning':{prefix:'Warning', color:'orange', m:'warn'},
             'sep':{prefix:'--------------------------------------------------------', color:'grey'},
             'log':{prefix:'Log', color:'black'}
         };
 
-        console.log('%c' + set[type].prefix + ' > ' + content, "color:" + set[type].color);
+        content = set[type].prefix + ' > ' + content;
+        if(set[type].m){
+            console[set[type].m](content);
+        }else{
+            console.log('%c' + content, "color:" + set[type].color);
+        }
     }
+
     function _set_depth(key, end){
         //
     }

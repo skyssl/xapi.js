@@ -144,7 +144,6 @@ var xapi = (function($){
     }
 
     function _run_callback(name, $elm, data) {
-        //var name = arguments[0], $elm = arguments[1], data;
         if($elm && $elm.attr(name)){
             try{
                 var func = eval($elm.attr(name).replace('()', ''));
@@ -679,7 +678,7 @@ var xapi = (function($){
 
         'after_complete': function(event, xhr, settings, $elm){
             xapi.hide_progress();
-            _run_callback('x-after-complete', $elm, event, xhr, settings);
+            //_run_callback('x-after-complete', $elm, event, xhr, settings);
         },
 
         'after_render':function(data, $elm){
@@ -687,6 +686,7 @@ var xapi = (function($){
             xapi.hide_progress();
             _run_callback('x-after-render', $elm, data);
         },
+
         'get_by_uuid': function(uuid){
             return $('[_uuid="' + uuid + '"]');
         },
