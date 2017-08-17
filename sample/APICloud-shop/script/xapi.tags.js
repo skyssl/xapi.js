@@ -285,12 +285,10 @@ xapi.create_command('photo', function(elm){
             }else{
                 after_select = function($elm, picdata){
                     var $img;
-                    if(!$elm.attr('x-insert')){
-                        if($elm.is('img'))$img = $elm;
-                        else $img = $elm.find('img.preview');
-                        if(!$img.length)
-                            $img = $elm.find('img').first();
-                    }
+                    if($elm.is('img'))$img = $elm;
+                    else $img = $elm.find('img.preview');
+                    if(!$img.length)
+                        $img = $elm.find('img').first();
 
                     if(!$img || !$img.length){
                         xapi.debug('没找到预览图片(img.preview)', 'err');
@@ -303,10 +301,14 @@ xapi.create_command('photo', function(elm){
 
             after_select($elm, base64);
 
+            var datakey = $elm.attr('x-picdata-key')||'picdata';
+            var data = $elm.attr('x-data') ? xapi.utils.query_string2json($elm.attr('x-data')) : {};
+            data[datakey] = base64;
+
             //上传图片
             xapi.post({
                 api_path:$elm.attr('x-api-path'),
-                data:{picdata:base64},
+                data:data,
                 success:$elm.attr('x-success')||'',
                 fail:$elm.attr('x-fail')||'',
                 error:$elm.attr('x-error')||'',

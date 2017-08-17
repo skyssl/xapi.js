@@ -233,7 +233,7 @@ xapi.render = (function($){
 
         $element.x_render_count(1);
 
-        if( $element.attr('x-loadmore') && $element.attr('x-psize') ){
+        if( $element.attr('x-loadmore') && $element.attr('x-psize') && !$element.x_has_attr('xx-tab') ){
             if(!$element.x_page()){
                 $element.x_page(1);
             }
@@ -259,7 +259,7 @@ xapi.render = (function($){
 
     //渲染某个元素
     function fetch_element(element, data, option){
-        var $element = $$(element);
+        var $element = $$(element), $src_element = $element;
         option = option || {};
 
         if(option.repl_self){
@@ -405,10 +405,22 @@ xapi.render = (function($){
         //替换@logined
         html = html.replace(/@logined/g, xapi.is_login() ? 1 : 0);
 
+        //替换$xapi.xxx
+        var arr = html.match(/\{\$xapi\.[\w\.]+\}/g);
+        for(var i in arr){
+            try{
+                var v = eval( arr[i].replace(/[\{\}]/g, '') );
+                html = html.replace(arr[i], v||'');
+                html_changed = true;
+            }catch(error){
+                xapi.debug('取得配置属性' + arr[i] + '失败:' + error, 'err');
+            }
+        }
+
         //替换xopen中的$
         var exp = /[xopen|xjump]=[\'\"].*?=\$[\w\.]+.*?[\'\"]/g, res;
         while( (res = exp.exec(html)) != null){
-            var arr = res[0].match(/\$[\w\.]+/g), repl = res[0];  //有多个变量
+            var arr = res[0].match(/\$[\w\.\[\]]+/g), repl = res[0];  //有多个变量
             for(var i in arr){
                 var v = _parse_var(arr[i], data);
                 if(v !== false){
@@ -418,11 +430,11 @@ xapi.render = (function($){
             html = html.replace(res[0], repl);
             html_changed = true;
         }
-
+        
         //替换{if(...)}...{endif}
         var exp = /\{if.*?\}([\s\S]*?)\{endif\}/g, res;
         while( (res = exp.exec(html)) != null){
-            var express = res[0],
+            var express = res[0].replace(/=\"\"/g, ''),
                 ifresults = res[1].replace(/'/g, "\\'").replace(/"/g, '\\"'),
                 arr = ifresults.split('{else}');
 
@@ -444,8 +456,33 @@ xapi.render = (function($){
             $element[0].innerHTML = html;
         }
 
+        //解析<div if ... else endif>  todo ie端支持有问题（属性的顺序反了）
+        $element.find("[if]").each(function () {
+            var ifpass = !!_expression_result($(this).attr('if'), data);
+            var st_if, st_else, $e = $(this), rm_attrs = ['if', 'else', 'endif'];
+            $.each(this.attributes,function(i,attrib){
+                if(attrib.name.toLocaleLowerCase() == 'if')st_if = true;
+                if(attrib.name.toLocaleLowerCase() == 'else')st_else = true;
+                if(attrib.name.toLocaleLowerCase() == 'endif'){
+                    return false;
+                }
+                if(!st_if)return;
+                if( (ifpass && st_else) || (!ifpass && !st_else) ){
+                    rm_attrs.push(attrib.name);
+                }
+            });
+
+            for(var i in rm_attrs)
+                $e.removeAttr(rm_attrs[i])
+        });
+        
         //替换<if
+        //alert( $element.attr('_comd_lab') );
         $element.find('if').each(function(){
+            //避免父指令替换 todo
+            if($(this).closest('[_comd_lab]').attr('_comd_lab') != $src_element.attr('_comd_lab')){
+                return;
+            }
             var arr = this.innerHTML.split('&lt;:else:&gt;'),
                 result = !!_expression_result($(this).attr('condition'), data),
                 repl_html;
@@ -474,17 +511,19 @@ xapi.render = (function($){
         if(!src_var)return '';
         if(!data || xapi.utils.is_empty_object(data))return false;
 
-        var str_var = src_var;
+        var str_var = src_var, data_format;
         var i = str_var.indexOf('|'), str_func = '', val = '';
         if(i != -1){
             str_func = str_var.substr(i + 1);
-            if(!isNaN(str_func)){
+            if(str_func && !isNaN(str_func)){
                 str_func = "def=" + str_func;
             }else if(str_func == 'date'){
                 str_func = "xapi.utils.date(###, 'yyyy-MM-dd')";
             }else if(str_func == 'datetime'){
                 str_func = "xapi.utils.date(###, 'yyyy-MM-dd hh:mm:ss')";
-            }
+            }else if(str_func.substr(0, 7) == 'format='){
+                data_format = str_func.substr(7);
+			}
 
             str_var = str_var.substr(0, i);
         }
@@ -512,6 +551,12 @@ xapi.render = (function($){
             if(str_func.substr(0, 4) == 'def='){
                 eval( str_func.replace('def', 'val') + ";");
                 return val;
+            }
+        }
+
+        if(data_format && val){
+            if(/^\d+$/.test(val)){
+                str_func = "xapi.utils.date(###, '" + data_format + "')";
             }
         }
 
@@ -594,7 +639,7 @@ xapi.render = (function($){
                                .replace(/ ne /g, ' != ').replace(/ neq /g, ' != ')
                                .replace(/ ge /g, ' >= ').replace(/ gte /g, ' >= ')
                                .replace(/ le /g, ' <= ').replace(/ lte /g, ' <= ');
-        return expression;        
+        return expression;
     }
 
     function _expression_result(src_expression, data, is_parent_data) {

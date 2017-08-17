@@ -46,6 +46,8 @@ xapi.validator = (function($){
             kname = 'data-v',
             $validators = $form.find('['+kname+']');
 
+        if(!$validators.length)return true;
+
         $validators.each(function(){
             if(!(pass = check(this, kname))){
                 return false;
@@ -94,7 +96,7 @@ xapi.validator = (function($){
 
     function check_require(elm){
         var is_empty = false;
-        if($(elm).is('input[type="text"]') || $(elm).is('input[type="password"]') || $(elm).is('select')){
+        if($(elm).is('input[type="text"]') || $(elm).is('input[type="hidden"]') || $(elm).is('input[type="password"]') || $(elm).is('select') || $(elm).is('textarea')) {
             is_empty = (elm.value === '');
         }else{
             var name = $(elm).attr('name');
@@ -227,7 +229,7 @@ xapi.validator = (function($){
             msg = msg ? msg : label + '格式有误';
         }
 
-        $xapi.form_validator_fail_alert(msg);
+        xapi.form_validator_fail_alert(msg);
     }
 
     return {

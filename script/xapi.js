@@ -281,7 +281,7 @@ var xapi = (function($){
                         _debug('接口地址 或 服务器错误:' + api_path, 'err');       
                     }
                     xapi.toast('亲，网络好像不通哦.', 2, 'top');
-                    xapi.network_error();
+                    //xapi.network_error();
                 }else if(XMLHttpRequest.status == 401){
                     $('body').show();
                 }
@@ -438,7 +438,7 @@ var xapi = (function($){
             'log':{prefix:'Log'}
         };
 
-        content = (set[type].color?'%c':'') + 'xapi:: ' + set[type].prefix + ' > ' + content;
+        content = (set[type].color?'%c':'') + 'xapi::' + set[type].prefix + ' > ' + content;
 
         if(set[type].m){
             console[set[type].m](content);
