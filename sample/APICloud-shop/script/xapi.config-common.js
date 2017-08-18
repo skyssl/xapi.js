@@ -6,25 +6,27 @@ var xapi_config = {
     'debug_print_succ_result': false,  //接口调用成功后，是否打印接口数据(可在浏览器地址栏加上参数?_d=1临时打印)
 
     /* 以下参数请在后端配合下设置 */
-    //'api_base_url': 'http://192.168.1.55/index.php/api/',   //api的基本地址
-    'api_base_url': 'http://112.74.89.244:8081/index.php?s=api/',   //api的基本地址
-    //'api_base_url': 'http://tpshop.local/index.php/api/',   //api的基本地址
+    'api_base_url': 'http://o2o.885505.com/api.php?s=',   //api的基本地址
     'jsonp': true,                                      //PC测试用，生产环境请关闭，jsonp存在安全漏洞，请确保使用的jsonp服务安全可信（jsonp不支持post，且无法获取http状态码, 可能为您的调试带来困难）
+    'mobile_jsonp': true,                               //手机调试用，是否在手机端启用jsonp, 用于支持APICloud的contrl+o （jsonp为false无效）
     'sign_key': 'axfkuilsxx4349dd-fdsfxlffx',           //用于生成签名
     'access_token_name': 'access_token',                //标识登陆用户，你也可以设为id，本地存储和api请求的都使用该名称
-    'access_token_test': 'xxx',      //测试用的access_token
+    'access_token_test': 'xxx',                         //测试用的access_token
     'url_page_name': 'p',                               //url分页参数名
     'url_psize_name': 'psize',                          //url分页大小参数名
     'html_dir': 'html/',                                //除首页外其他html文件的存放目录，请加上/
     'html_ext': '.html',
 
+    'user_default_avator': '../../images/user_default.png',
+    'goods_default': '../../images/goods_default.png',
+
     'is_show_progress': true,                           //是否显示加载框？
 
     /* 通用文件路径 */
     'uris': {
-        'index': 'index',   //首页
-        'login': 'user/login',  //登录页
-        'user_index': 'user/index'   //会员中心
+        'index': 'main/home',   //首页
+        'login': 'public/login',  //登录页
+        'user_index': 'main/center'   //会员中心
     },
 
     /* 提示信息 */
@@ -87,6 +89,7 @@ var xapi_config = {
         }
 
         return false;
-    }
+    },
+    'A_quan': 'A券',
 };
 

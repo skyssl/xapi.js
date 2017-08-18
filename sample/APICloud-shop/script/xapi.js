@@ -29,8 +29,7 @@ var xapi = (function($){
         __commands = {},
         __user_local_data_group_name = '__user__',  //本地用于保存用户的组名
         __root_path = api_js[api_js.length-1].src.substring(0,api_js[api_js.length-1].src.lastIndexOf("/")+1) + "../",
-        api_request_count = 0, //记录页面请求接口的次数, 第一次时显示加载框;
-        is_show_progressed = false;  //是否已显示加载框;
+        api_request_count = 0; //记录页面请求接口的次数, 第一次时显示加载框;
 
 
     $xapi = $.extend({}, xapi_config);
@@ -42,6 +41,9 @@ var xapi = (function($){
         if(xapi.render && xapi.render.init_page){
             xapi.render.init_page();
         }
+
+        //替换@,$xapi等变量
+        xapi.render.render_body();
 
         $(document).on('click', '[xopen]', function(){
             xapi.utils.open_window(this);
@@ -229,7 +231,7 @@ var xapi = (function($){
         if(method == 'get'){
             url = _build_api_url(api_path, data);
             data = {};
-            dataType = $xapi.jsonp && xapi.in_web ? 'jsonp' : 'json';
+            dataType = $xapi.jsonp && (xapi.in_web || $xapi.mobile_jsonp) ? 'jsonp' : 'json';
         }else{
             url = _build_api_url(api_path);
             dataType = 'json';
@@ -582,6 +584,8 @@ var xapi = (function($){
         'set_depth': _set_depth,
         'use_time':_use_time,
 
+        'is_show_progressed': false,
+
         'page_param':function(name){
             if(xapi.in_web){
                 var url = window.location.search; //获取url中"?"符后的字串
@@ -677,11 +681,11 @@ var xapi = (function($){
         },
 
         'show_progress':function(title, modal, text){
-            //if(is_show_progressed || !$xapi.is_show_progress || !xapi.platform.show_progress){
-            if(!$xapi.is_show_progress || !xapi.platform.show_progress){
+            if(xapi.is_show_progressed || !$xapi.is_show_progress || !xapi.platform.show_progress){
                 return;
             }
-            is_show_progressed = true;
+            xapi.is_show_progressed = true;
+            console.log('###############');
             xapi.platform.show_progress(title, modal, text);
         },
         'hide_progress':function(){
@@ -942,6 +946,14 @@ $.fn.x_api_data = function (data, set) {
     }
 }
 
+$.fn.x_html = function (html) {
+    if(html) {
+        $(this)[0].innerHTML = html;
+        return $(this);
+    }else{
+        return $(this)[0].innerHTML.replace(/(^\s*)|(\s*$)/g, "");
+    }
+}
 $.fn.x_show = function () {
     if($(this).css('display') != 'none'){
         return $(this);

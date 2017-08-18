@@ -29,6 +29,68 @@ xapi.render = (function($){
         }*/
     }
 
+    function render_body() {
+        var html = $('body').html(), html_changed = false;
+
+        //替换@page_param.
+        var arr = html.match(/[\{]?@page_param\.[\w\.]+[\}]?/g);
+        for(var i in arr){
+            try{
+                var v = eval( arr[i].replace('@page_param', 'xapi.page_param()') );
+                html = html.replace(arr[i], v||'');
+                html_changed = true;
+            }catch(error){
+                xapi.debug('取得页面传值' + arr[i] + '失败:' + error, 'err');
+            }
+        }
+
+        //替换@local.
+        var arr = html.match(/[\{]?@local\.[\w\.]+[\}]?/g);
+        for(var i in arr){
+            try{
+                var v = eval( arr[i].replace('@local.', 'xapi.local_data("') + '")' );
+                html = html.replace(arr[i], v||'');
+                html_changed = true;
+            }catch(error){
+                xapi.debug('取得页面传值' + arr[i] + '失败:' + error, 'err');
+            }
+        }
+
+        //替换@user.
+        var arr = html.match(/[\{]?@user\.[\w\.]+[\}]?/g);
+        for(var i in arr){
+            try{
+                var v = eval( arr[i].replace('@user.', 'xapi.user_data("') + '")' );
+                html = html.replace(arr[i], v||'');
+                html_changed = true;
+            }catch(error){
+                xapi.debug('取得页面传值' + arr[i] + '失败:' + error, 'err');
+            }
+        }
+
+        //替换@logined
+        html = html.replace(/[\{]?@logined[\}]?/g, xapi.is_login() ? 1 : 0);
+
+        //替换$xapi.xxx
+        var arr = html.match(/\{\$xapi\.[\w\.]+\}/g);
+        for(var i in arr){
+            try{
+                var v = eval( arr[i].replace(/[\{\}]/g, '') );
+                html = html.replace(arr[i], v||'');
+                html_changed = true;
+            }catch(error){
+                xapi.debug('取得配置属性' + arr[i] + '失败:' + error, 'err');
+            }
+        }
+
+        if(html_changed){
+            $('body').x_html(html);
+        }
+
+        //替换x todo
+
+    }
+
     function loop_tpl(element, $container) {
         var $element = $$(element),
             uuid = $element.x_uuid();
@@ -155,7 +217,7 @@ xapi.render = (function($){
                     $note = $("<div style='text-align:center;clear:both;'></div>");
                     $container.append($note.addClass(css_note_empty));
                 }
-                $note.html(note).x_show();
+                $note.x_html(note).x_show();
             }
 
             if($element.x_nomore() && load_more){
@@ -349,7 +411,10 @@ xapi.render = (function($){
                 aname = arr[0];
                 vname = arr[1];
             }
-            _assign_elm_x($(this), _parse_var( vname, data ), aname);
+            var succ = _assign_elm_x($(this), _parse_var( vname, data ), aname);
+            if(succ){
+                $(this).removeAttr('x');
+            }
         });
 
         //替换{$xxx}
@@ -364,57 +429,6 @@ xapi.render = (function($){
                 }
             }
             html_changed = true;
-        }
-
-        //替换@page_param.
-        var arr = html.match(/@page_param\.[\w\.]+/g);
-        for(var i in arr){
-            try{
-                var v = eval( arr[i].replace('@page_param', 'xapi.page_param()') );
-                html = html.replace(arr[i], v||'');
-                html_changed = true;
-            }catch(error){
-                xapi.debug('取得页面传值' + arr[i] + '失败:' + error, 'err');
-            }
-        }
-
-        //替换@local.
-        var arr = html.match(/@local\.[\w\.]+/g);
-        for(var i in arr){
-            try{
-                var v = eval( arr[i].replace('@local.', 'xapi.local_data("') + '")' );
-                html = html.replace(arr[i], v||'');
-                html_changed = true;
-            }catch(error){
-                xapi.debug('取得页面传值' + arr[i] + '失败:' + error, 'err');
-            }
-        }
-
-        //替换@user.
-        var arr = html.match(/@user\.[\w\.]+/g);
-        for(var i in arr){
-            try{
-                var v = eval( arr[i].replace('@user.', 'xapi.user_data("') + '")' );
-                html = html.replace(arr[i], v||'');
-                html_changed = true;
-            }catch(error){
-                xapi.debug('取得页面传值' + arr[i] + '失败:' + error, 'err');
-            }
-        }
-
-        //替换@logined
-        html = html.replace(/@logined/g, xapi.is_login() ? 1 : 0);
-
-        //替换$xapi.xxx
-        var arr = html.match(/\{\$xapi\.[\w\.]+\}/g);
-        for(var i in arr){
-            try{
-                var v = eval( arr[i].replace(/[\{\}]/g, '') );
-                html = html.replace(arr[i], v||'');
-                html_changed = true;
-            }catch(error){
-                xapi.debug('取得配置属性' + arr[i] + '失败:' + error, 'err');
-            }
         }
 
         //替换xopen中的$
@@ -499,7 +513,7 @@ xapi.render = (function($){
         $element.x_show();
 
         if(option.repl_self){
-            $element = $( $element.html() );
+            $element = $( $element.x_html() );
         }
 
         $element.x_render_count(1);
@@ -600,17 +614,17 @@ xapi.render = (function($){
 
         if($elm.is("select")){
             $elm[0].value = val;
-            return;
+            return $elm;
         }
         if($elm.is('input[type="radio"]')){
             if($elm.val() == val)
                 $elm.attr('checked', true);
-            return;
+            return $elm;
         }
         if($elm.is('input[type="checkbox"]')){
             if( xapi.utils.in_array($elm.val(), val) )
                 $elm.attr('checked', true);
-            return;
+            return $elm;
         }
 
         if(!attr){
@@ -678,12 +692,13 @@ xapi.render = (function($){
         }
 
         if(change){
-            $element.html( html );
+            $element.x_html( html );
         }
         */
     }
 
     return {
+        'render_body': render_body,
         'fetch_element': fetch_element,
         'fetch_loop': fetch_loop,
         'init_list': _init_list,

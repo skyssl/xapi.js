@@ -153,6 +153,7 @@ xapi.platform = (function($){
         'page_param': function (name) {
             try {
                 var data = api.pageParam.data;
+                if(!data)data = api.pageParam;
                 if(!data)return name ? '' : {};
                 return name ? (data[name]||'') : data;
             }catch(error){
